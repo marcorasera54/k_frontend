@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AuthState, User } from "@/lib/types/auth";
 import api from "@/components/api/api";
-import { loginUser } from "@/components/api/connectors/authApi";
+import { loginUser, signupUser, verifyEmail } from "@/components/api/connectors/authApi";
 
 const initialState: AuthState = {
   user: null,
@@ -19,7 +19,7 @@ export const initializeAuth = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue("Token expired");
     }
-  }
+  },
 );
 
 const authSlice = createSlice({
@@ -55,6 +55,35 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Login failed";
+        state.isAuthenticated = false;
+      })
+
+      .addCase(signupUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(signupUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(signupUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Signup failed";
+      })
+
+      .addCase(verifyEmail.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Email verification failed";
         state.isAuthenticated = false;
       })
 

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearError } from "@/store/slices/authSlice";
 import { setToast, TOAST_TYPE } from "@/components/ui/toast";
+import { signupUser } from "@/components/api/connectors/authApi";
 
 const SignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -84,7 +85,7 @@ const SignupForm: React.FC = () => {
 
     try {
       const { confirmPassword, ...signupData } = formData;
-      // await dispatch(signupUser(signupData)).unwrap();
+      await dispatch(signupUser(signupData)).unwrap();
 
       setIsSuccess(true);
 
