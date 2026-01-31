@@ -4,8 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { clearError } from "@/store/slices/authSlice";
+import { ArrowLeft } from "lucide-react";
+import { resetPassword, verifyResetToken } from "@/components/api/connectors/authApi";
 
 const ResetPasswordForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -25,26 +27,25 @@ const ResetPasswordForm: React.FC = () => {
   useEffect(() => {
     dispatch(clearError());
 
-    // Verify token on component mount
-    //if (token) {
-    //  dispatch(verifyResetToken(token))
-    //    .unwrap()
-    //    .then(
-    //      (response: {
-    //        valid:
-    //          | boolean
-    //          | ((prevState: boolean | null) => boolean | null)
-    //          | null;
-    //      }) => {
-    //        setIsTokenValid(response.valid);
-    //      },
-    //    )
-    //    .catch(() => {
-    //      setIsTokenValid(false);
-    //    });
-    //} else {
-    //  setIsTokenValid(false);
-    //}
+    if (token) {
+      dispatch(verifyResetToken(token))
+        .unwrap()
+        .then(
+          (response: {
+            valid:
+              | boolean
+              | ((prevState: boolean | null) => boolean | null)
+              | null;
+          }) => {
+            setIsTokenValid(response.valid);
+          },
+        )
+        .catch(() => {
+          setIsTokenValid(false);
+        });
+    } else {
+      setIsTokenValid(false);
+    }
   }, [dispatch, token]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,13 +91,13 @@ const ResetPasswordForm: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // await dispatch(
-      //   resetPassword({
-      //     token,
-      //     new_password: formData.new_password,
-      //     confirm_password: formData.confirm_password,
-      //   }),
-      // ).unwrap();
+      await dispatch(
+        resetPassword({
+          token,
+          new_password: formData.new_password,
+          confirm_password: formData.confirm_password,
+        }),
+      ).unwrap();
 
       setIsResetSuccessful(true);
     } catch (error: any) {
@@ -106,7 +107,7 @@ const ResetPasswordForm: React.FC = () => {
     }
   };
 
-  if (isTokenValid === null) {
+  if (!isTokenValid === null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -119,98 +120,119 @@ const ResetPasswordForm: React.FC = () => {
 
   if (isTokenValid === false) {
     return (
-      <div className="w-full mx-auto">
-        <div className="px-8">
-          <div className="text-center mb-8">
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              Invalid or expired reset token.
-              <br /> Please request a new password reset.
-            </div>
-            <Button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
-              className="w-full mt-4"
-            >
-              Request New Reset
-            </Button>
-          </div>
+      <div className="w-full text-center">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+            Token non valido o scaduto
+          </h1>
+          <p className="text-gray-600 text-base mb-2">
+            Richiedi un nuovo link per reimpostare la password.
+          </p>
         </div>
+
+        <Button
+          onClick={() => router.push("/forgot-password")}
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+        >
+          Richiedi nuovo reset
+        </Button>
       </div>
     );
   }
 
   if (isResetSuccessful) {
     return (
-      <div className="w-full mx-auto">
-        <div className="text-center px-8">
-          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-            Password reset successful!
-            <br /> You can now login with your new password.
-          </div>
-          <Button
-            onClick={() => router.push("/login")}
-            className="w-full"
-          >
-            Go to Login
-          </Button>
+      <div className="w-full text-center">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+            Password reimpostata con successo!
+          </h1>
+          <p className="text-gray-600 text-base mb-2">
+            Ora puoi accedere utilizzando la tua nuova password.
+          </p>
         </div>
+        <Button
+          onClick={() => router.push("/login")}
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+        >
+          Vai al login
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="w-full mx-auto">
-      <div className="px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-            Reset Password
-          </h1>
-        </div>
+    <div className="w-full">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          Reimposta la password
+        </h1>
+        <p className="text-gray-600 text-base">
+          Inserisci la nuova password e confermala per continuare.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Password
+          </label>
           <Input
             type="password"
             name="new_password"
             value={formData.new_password}
             onChange={handleInputChange}
-            placeholder="Enter new password"
+            placeholder="••••••••"
             disabled={isLoading}
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
-
+        </div>
+        <div>
+          <label
+            htmlFor="confirm_password"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Conferma Password
+          </label>
           <Input
             type="password"
             name="confirm_password"
             value={formData.confirm_password}
             onChange={handleInputChange}
-            placeholder="Confirm new password"
+            placeholder="••••••••"
             disabled={isLoading}
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
-
-          <Button
-            type="submit"
-            disabled={
-              isLoading || !formData.new_password || !formData.confirm_password
-            }
-            className="w-full"
-          >
-            {isLoading ? (
-              <div className="py-0.5">
-                <div className="w-4.5 h-4.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : (
-              "Reset Password"
-            )}
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <a
-            href="/login"
-            className="text-md text-black/80 hover:text-black font-medium"
-          >
-            Back to Login
-          </a>
         </div>
+
+        <Button
+          type="submit"
+          disabled={
+            isLoading || !formData.new_password || !formData.confirm_password
+          }
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+        >
+          {isLoading ? (
+            <div className="py-0.5">
+              <div className="w-4.5 h-4.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            "Reimposta"
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <a
+          href="/login"
+          className="inline-flex items-center gap-2 text-md font-medium text-black/80 hover:text-black"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <span>Ritorna al login</span>
+        </a>
       </div>
     </div>
   );

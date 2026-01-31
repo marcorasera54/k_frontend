@@ -41,16 +41,16 @@ const LoginForm: React.FC = () => {
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: result?.message || "Logged in successfully.",
+        title: "Successo!",
+        message: result?.message || "Accesso eseguito con successo.",
       });
     } catch (error: any) {
       const errorMessage =
-        typeof error === "string" ? error : error?.message || "Login failed.";
+        typeof error === "string" ? error : error?.message || "Login fallito.";
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Login Failed",
+        title: "Accesso fallito",
         message: errorMessage,
       });
     }
@@ -58,91 +58,126 @@ const LoginForm: React.FC = () => {
 
   const handleGoogleLogin = async () => {
     try {
-    } catch (error) {}
+      // Implement Google login logic
+    } catch (error) {
+      // Handle error
+    }
   };
 
   return (
-    <div className="w-full mx-auto">
-      <div className="px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-            Sign In to C
-          </h1>
-        </div>
+    <div className="w-full">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          Bentornato!
+        </h1>
+        <p className="text-gray-600 text-base">
+          Accedi al tuo account per continuare
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Email
+          </label>
           <Input
+            id="email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="Enter your email"
+            placeholder="you@example.com"
             disabled={isLoading}
-            className="rounded"
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
+        </div>
 
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Password
+          </label>
           <Input
+            id="password"
             type="password"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            placeholder="Enter your password"
+            placeholder="••••••••"
             disabled={isLoading}
-            className="rounded"
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
-          <div className="text-end">
-            <a
-              href="/forgot-password"
-              className="text-sm text-gray-900 hover:text-black hover:underline font-medium"
-            >
-              Forgot your password?
-            </a>
-          </div>
-
-          <Button
-            type="submit"
-            disabled={
-              isLoading ||
-              !/\S+@\S+\.\S+/.test(formData.email) ||
-              !formData.password
-            }
-            className="w-full rounded"
-          >
-            {isLoading ? (
-              <div className="py-0.5">
-                <div className="w-4.5 h-4.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : (
-              "Sign In"
-            )}
-          </Button>
-        </form>
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">or</span>
-          </div>
         </div>
+
+        <div className="flex items-center justify-end">
+          <a
+            href="/forgot-password"
+            className="text-sm text-gray-900 hover:text-black hover:underline font-medium"
+          >
+            Password dimenticata?
+          </a>
+        </div>
+
         <Button
-          variant={"outline"}
-          className="w-full rounded"
-          onClick={handleGoogleLogin}
-          disabled={isLoading}
+          type="submit"
+          disabled={
+            isLoading ||
+            !/\S+@\S+\.\S+/.test(formData.email) ||
+            !formData.password
+          }
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
         >
           {isLoading ? (
-            <div className="py-0.5">
-              <div className="w-4.5 h-4.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <span className="flex items-center gap-2">
-              <GoogleIcon />
-              Continue with Google
-            </span>
+            "Accedi"
           )}
         </Button>
+      </form>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-4 sm:bg-white bg-gray-50 text-gray-500 font-medium">O</span>
+        </div>
       </div>
+
+      <Button
+        variant="outline"
+        className="w-full h-10 rounded border border-gray-300 hover:border-gray-400/50 hover:bg-gray-50 font-medium transition-colors"
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <div className="flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <span className="flex items-center gap-3">
+            <GoogleIcon />
+            Continua con Google
+          </span>
+        )}
+      </Button>
+
+      <p className="mt-8 text-center text-sm text-gray-600">
+        Non hai ancora un account?{" "}
+        <a
+          href="/signup"
+          className="font-medium text-gray-900 hover:underline"
+        >
+          Registrati
+        </a>
+      </p>
     </div>
   );
 };

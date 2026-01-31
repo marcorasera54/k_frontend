@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearError } from "@/store/slices/authSlice";
 import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 import { signupUser } from "@/components/api/connectors/authApi";
+import { GoogleIcon } from "@/lib/constants/icons/google-icon";
 
 const SignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -47,29 +48,29 @@ const SignupForm: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.first_name.trim()) {
-      newErrors.first_name = "First name is required";
+      newErrors.first_name = "Il nome è obbligatorio";
     }
 
     if (!formData.last_name.trim()) {
-      newErrors.last_name = "Last name is required";
+      newErrors.last_name = "Il cognome è obbligatorio";
     }
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = "L'email è obbligatoria";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = "Inserisci un indirizzo email valido";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = "La password è obbligatoria";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = "La password deve contenere almeno 8 caratteri";
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword = "Conferma la password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = "Le password non coincidono";
     }
 
     setErrors(newErrors);
@@ -91,136 +92,243 @@ const SignupForm: React.FC = () => {
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Signup Successful",
-        message: "Your account has been created successfully!",
+        title: "Successo",
+        message: "Il tuo account è stato creato con successo!",
       });
     } catch (error: any) {
-      console.error("Signup failed:", error);
-
       const errorMessage =
-        error?.message || "Something went wrong. Please try again.";
+        error?.message || "Qualcosa non va. Per favore, riprova.";
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Signup Failed",
+        title: "Registrazione fallita",
         message: errorMessage,
       });
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      // Implement Google login logic
+    } catch (error) {
+      // Handle error
+    }
+  };
+
   if (isSuccess) {
     return (
-      <div className="w-full mx-auto">
-        <div className="text-center px-8">
-          <div className="mb-4">
-            <svg
-              className="mx-auto h-12 w-12 text-green-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-            Account Created Successfully!
+      <div className="w-full text-center">
+        <div className="mb-6">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+            Account Creato!
           </h1>
-          <p className="text-gray-600 mb-6">
-            We've sent a verification email to {formData.email}. Please check
-            your inbox and click the verification link to activate your account.
+          <p className="text-gray-600 text-base mb-2">
+            Abbiamo inviato un'email di verifica a
           </p>
-          <Button onClick={() => router.push("/login")} className="w-full">
-            Go to Login
-          </Button>
+          <p className="text-gray-900 font-semibold mb-6">{formData.email}</p>
+          <p className="text-gray-600 text-sm mb-8">
+            Si prega di controllare la posta in arrivo e cliccare sul link di
+            verifica per attivare il tuo account.
+          </p>
         </div>
+        <Button
+          onClick={() => router.push("/login")}
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+        >
+          Torna al login
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="w-full mx-auto">
-      <div className="px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-            Create Account
-          </h1>
-        </div>
+    <div className="w-full">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          Crea un account!
+        </h1>
+        <p className="text-gray-600 text-base">
+          Inizia con il tuo account gratuito
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="first_name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Nome
+            </label>
             <Input
+              id="first_name"
               type="text"
               name="first_name"
               value={formData.first_name}
               onChange={handleInputChange}
-              placeholder="Enter your first name"
+              placeholder="John"
               disabled={isLoading}
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
+            {errors.first_name && (
+              <p className="mt-1.5 text-sm text-red-600">{errors.first_name}</p>
+            )}
+          </div>
 
+          <div>
+            <label
+              htmlFor="last_name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Cognome
+            </label>
             <Input
+              id="last_name"
               type="text"
               name="last_name"
               value={formData.last_name}
               onChange={handleInputChange}
-              placeholder="Enter your last name"
+              placeholder="Doe"
               disabled={isLoading}
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
+            {errors.last_name && (
+              <p className="mt-1.5 text-sm text-red-600">{errors.last_name}</p>
+            )}
           </div>
+        </div>
 
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Email
+          </label>
           <Input
+            id="email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="Enter your email"
+            placeholder="you@example.com"
             disabled={isLoading}
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
+          {errors.email && (
+            <p className="mt-1.5 text-sm text-red-600">{errors.email}</p>
+          )}
+        </div>
 
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Password
+          </label>
           <Input
+            id="password"
             type="password"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            placeholder="Enter your password"
+            placeholder="••••••••"
             disabled={isLoading}
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
+          {errors.password && (
+            <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>
+          )}
+          {!errors.password && formData.password && (
+            <p className="mt-1.5 text-sm text-gray-500">
+              Must be at least 8 characters
+            </p>
+          )}
+        </div>
 
+        <div>
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Conferma password
+          </label>
           <Input
+            id="confirmPassword"
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            placeholder="Confirm your password"
+            placeholder="••••••••"
             disabled={isLoading}
+            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
           />
+          {errors.confirmPassword && (
+            <p className="mt-1.5 text-sm text-red-600">
+              {errors.confirmPassword}
+            </p>
+          )}
+        </div>
 
-          <Button
-            type="submit"
-            disabled={
-              isLoading ||
-              !formData.first_name ||
-              !formData.last_name ||
-              !/\S+@\S+\.\S+/.test(formData.email) ||
-              !formData.password ||
-              !formData.confirmPassword
-            }
-            className="w-full"
-          >
-            {isLoading ? (
-              <div className="py-0.5">
-                <div className="w-4.5 h-4.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-        </form>
+        <Button
+          type="submit"
+          disabled={
+            isLoading ||
+            !formData.first_name ||
+            !formData.last_name ||
+            !/\S+@\S+\.\S+/.test(formData.email) ||
+            !formData.password ||
+            !formData.confirmPassword
+          }
+          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            "Registrati"
+          )}
+        </Button>
+      </form>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-4 sm:bg-white bg-gray-50 text-gray-500 font-medium">
+            O
+          </span>
+        </div>
       </div>
+
+      <Button
+        variant="outline"
+        className="w-full h-10 rounded border border-gray-300 hover:border-gray-400/50 hover:bg-gray-50 font-medium transition-colors"
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <div className="flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <span className="flex items-center gap-3">
+            <GoogleIcon />
+            Continua con Google
+          </span>
+        )}
+      </Button>
+
+      <p className="mt-8 text-center text-sm text-gray-600">
+        Hai già un account?{" "}
+        <a href="/login" className="font-medium text-gray-900 hover:underline">
+          Accedi
+        </a>
+      </p>
     </div>
   );
 };

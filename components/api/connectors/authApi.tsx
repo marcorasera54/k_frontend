@@ -45,3 +45,46 @@ export const verifyEmail = createAsyncThunk<
     return rejectWithValue(message);
   }
 });
+
+export const forgotPassword = createAsyncThunk<
+  { message: string },
+  { email: string },
+  { rejectValue: string }
+>("auth/forgotPassword", async (emailData, { rejectWithValue }) => {
+  try {
+    const response = await api.post("/auth/forgot-password", emailData);
+    return response.data;
+  } catch (error: any) {
+    const message =
+      error.response?.data?.detail || "Failed to send reset email";
+    return rejectWithValue(message);
+  }
+});
+
+export const verifyResetToken = createAsyncThunk<
+  { message: string; valid: boolean },
+  string,
+  { rejectValue: string }
+>("auth/verifyResetToken", async (token, { rejectWithValue }) => {
+  try {
+    const response = await api.post("/auth/verify-reset-token", { token });
+    return response.data;
+  } catch (error: any) {
+    const message = error.response?.data?.detail || "Invalid reset token";
+    return rejectWithValue(message);
+  }
+});
+
+export const resetPassword = createAsyncThunk<
+  { message: string },
+  { token: string; new_password: string; confirm_password: string },
+  { rejectValue: string }
+>("auth/resetPassword", async (resetData, { rejectWithValue }) => {
+  try {
+    const response = await api.post("/auth/reset-password", resetData);
+    return response.data;
+  } catch (error: any) {
+    const message = error.response?.data?.detail || "Password reset failed";
+    return rejectWithValue(message);
+  }
+});
