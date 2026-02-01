@@ -1,9 +1,16 @@
+export enum UserRole {
+  USER = "user",
+  FIELD_MANAGER = "field_manager",
+  ADMIN = "administrator"
+}
+
 export interface User {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
   is_verified: boolean;
+  role: UserRole;
 }
 
 export interface LoginRequest {

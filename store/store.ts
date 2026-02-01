@@ -2,6 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slices/authSlice";
+import fieldReducer from "./slices/fieldSlice";
+import bookingReducer from "./slices/bookingSlice";
+import sportsCentersReducer from "./slices/sportsCenterSlice";
+import availabilityReducer from "./slices/availabilitySlice";
 
 const persistConfig = {
   key: "auth",
@@ -16,6 +20,10 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       auth: persistedAuthReducer,
+      fields: fieldReducer,
+      bookings: bookingReducer,
+      sportsCenters: sportsCentersReducer,
+      availability: availabilityReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
