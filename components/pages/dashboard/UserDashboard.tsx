@@ -1,340 +1,326 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  fetchMyBookings,
-  cancelBooking,
-} from "@/components/api/connectors/bookingApi";
-import { fetchFields } from "@/components/api/connectors/fieldApi";
-import { BookingStatus } from "@/lib/types/booking";
 import { User } from "@/lib/types/auth";
-import { format } from "date-fns";
-import FieldBookingModal from "@/components/modals/FieldBookingModal";
+import { Field, SportType } from "@/lib/types/field";
+import { AvailableSlot } from "@/lib/types/availability";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchFields } from "@/components/api/connectors/fieldApi";
+import { fetchAvailableSlots, createBlockedSlot } from "@/components/api/connectors/availabilityApi";
+import { createBooking } from "@/components/api/connectors/bookingApi";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { format } from "date-fns";
+import { it } from "date-fns/locale";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, Calendar, MapPin, DollarSign, User as UserIcon, LogOut, Settings } from "lucide-react";
+  Calendar as CalendarIcon,
+  CheckCircle2,
+  Clock,
+  Dumbbell,
+  MapPin,
+  Trophy,
+} from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface UserDashboardProps {
   user: User;
 }
 
 export default function UserDashboard({ user }: UserDashboardProps) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
-  const { bookings, isLoading: bookingsLoading } = useAppSelector(
-    (state) => state.bookings,
-  );
-  const { fields } = useAppSelector((state) => state.fields);
-  const [cancelling, setCancelling] = useState<string | null>(null);
-  const [selectedField, setSelectedField] = useState<any | null>(null);
 
+  // State
+  const [selectedSport, setSelectedSport] = useState<SportType | null>(null);
+  const [date, setDate] = useState<string>(format(new Date(), "yyyy-MM-dd"));
+  const [fields, setFields] = useState<Field[]>([]);
+  const [selectedField, setSelectedField] = useState<Field | null>(null);
+  const [slots, setSlots] = useState<AvailableSlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load fields when sport changes
   useEffect(() => {
-    dispatch(fetchMyBookings());
-    dispatch(fetchFields({ is_active: true }));
-  }, [dispatch]);
+    if (selectedSport) {
+      setIsLoading(true);
+      dispatch(fetchFields({ sport_type: selectedSport, is_active: true }))
+        .unwrap()
+        .then((data) => {
+          setFields(data);
+          setSelectedField(null); // Reset field selection
+          setSlots([]); // Reset slots
+        })
+        .catch(() => toast.error("Errore nel caricamento dei campi"))
+        .finally(() => setIsLoading(false));
+    }
+  }, [selectedSport, dispatch]);
 
-  const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+  // Load slots when field or date changes
+  useEffect(() => {
+    if (selectedField && date) {
+      setIsLoading(true);
+      dispatch(fetchAvailableSlots({ fieldId: selectedField._id, date }))
+        .unwrap()
+        .then((data) => setSlots(data))
+        .catch(() => toast.error("Errore nel caricamento degli orari"))
+        .finally(() => setIsLoading(false));
+    }
+  }, [selectedField, date, dispatch]);
 
-    setCancelling(bookingId);
+  const handleBook = async () => {
+    if (!selectedField || !selectedSlot || !date) return;
+
     try {
-      await dispatch(cancelBooking(bookingId)).unwrap();
-      alert("Booking cancelled successfully");
+      setIsLoading(true);
+
+      const dateObj = new Date(date);
+
+      // Start time
+      const startTimeParts = selectedSlot.start_time.split(":");
+      const startDateTime = new Date(dateObj);
+      startDateTime.setHours(parseInt(startTimeParts[0]), parseInt(startTimeParts[1]), 0);
+
+      // End time
+      const endTimeParts = selectedSlot.end_time.split(":");
+      const endDateTime = new Date(dateObj);
+      endDateTime.setHours(parseInt(endTimeParts[0]), parseInt(endTimeParts[1]), 0);
+
+      await dispatch(
+        createBooking({
+          field_id: selectedField._id,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
+        })
+      ).unwrap();
+
+      toast.success("Prenotazione confermata!");
+      setIsBookingModalOpen(false);
+      setSelectedSlot(null);
+
+      // Refresh slots
+      dispatch(fetchAvailableSlots({ fieldId: selectedField._id, date }))
+        .unwrap()
+        .then(setSlots);
+
     } catch (error: any) {
-      alert(error || "Failed to cancel booking");
+      toast.error(error || "Errore durante la prenotazione");
     } finally {
-      setCancelling(null);
+      setIsLoading(false);
     }
   };
 
-  const getFieldName = (fieldId: string) => {
-    const field = fields.find((f) => f._id === fieldId);
-    return field?.name || "Unknown Field";
-  };
-
-  const getStatusVariant = (status: BookingStatus): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case BookingStatus.CONFIRMED:
-        return "default";
-      case BookingStatus.PENDING:
-        return "secondary";
-      case BookingStatus.CANCELLED:
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-
-  const getUserInitials = () => {
-    return `${user.first_name?.charAt(0) || ''}${user.last_name?.charAt(0) || ''}`.toUpperCase();
-  };
+  const sports = [
+    { type: SportType.FOOTBALL, label: "Calcio a 5", icon: Trophy, color: "bg-green-100 text-green-600" },
+    { type: SportType.PADEL, label: "Padel", icon: Dumbbell, color: "bg-blue-100 text-blue-600" },
+    { type: SportType.TENNIS, label: "Tennis", icon: Trophy, color: "bg-orange-100 text-orange-600" },
+    { type: SportType.BASKETBALL, label: "Basket", icon: Trophy, color: "bg-orange-100 text-orange-600" },
+    { type: SportType.VOLLEYBALL, label: "Pallavolo", icon: Trophy, color: "bg-yellow-100 text-yellow-600" },
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-6">
-          {/* Logo and Name */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-xl font-bold">C</span>
-            </div>
-            <span className="text-xl font-semibold">Nome</span>
+    <div className="container mx-auto p-4 md:p-8 space-y-8 max-w-6xl">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Ciao, {user.first_name}!</h1>
+          <p className="text-muted-foreground">Prenota il tuo prossimo campo in pochi click.</p>
+        </div>
+      </div>
+
+      {/* Sport Selection */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">1. Scegli lo sport</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {sports.map((sport) => (
+            <Card
+              key={sport.type}
+              className={cn(
+                "cursor-pointer transition-all hover:shadow-md border-2",
+                selectedSport === sport.type
+                  ? "border-primary bg-primary/5"
+                  : "border-transparent hover:border-gray-200"
+              )}
+              onClick={() => setSelectedSport(sport.type)}
+            >
+              <CardContent className="flex flex-col items-center justify-center p-6 gap-3 text-center">
+                <div className={cn("p-3 rounded-full", sport.color)}>
+                  <sport.icon className="w-6 h-6" />
+                </div>
+                <span className="font-medium">{sport.label}</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {selectedSport && (
+        <div className="grid md:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* Left Column: Date & Fields */}
+          <div className="md:col-span-4 space-y-8">
+            <section className="space-y-4">
+              <h2 className="text-xl font-semibold">2. Quando?</h2>
+              <div className="border rounded-lg p-4 bg-white shadow-sm">
+                <div className="flex flex-col space-y-2">
+                  <label htmlFor="date" className="text-sm font-medium text-gray-700">Seleziona una data</label>
+                  <input
+                    type="date"
+                    id="date"
+                    value={date}
+                    min={format(new Date(), "yyyy-MM-dd")}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-xl font-semibold">3. Dove?</h2>
+              <div className="h-[300px] overflow-y-auto rounded-md border p-4 bg-white shadow-sm">
+                {fields.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    {isLoading ? "Caricamento..." : "Nessun campo disponibile per questo sport."}
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {fields.map((field) => (
+                      <div
+                        key={field._id}
+                        onClick={() => setSelectedField(field)}
+                        className={cn(
+                          "p-4 rounded-lg border cursor-pointer transition-colors flex items-center justify-between",
+                          selectedField?._id === field._id
+                            ? "border-primary bg-primary/5 shadow-sm"
+                            : "hover:bg-gray-50 bg-white"
+                        )}
+                      >
+                        <div>
+                          <p className="font-medium">{field.name}</p>
+                          <p className="text-sm text-muted-foreground">{field.hourly_rate}€ / ora</p>
+                        </div>
+                        {selectedField?._id === field._id && (
+                          <CheckCircle2 className="w-5 h-5 text-primary" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
           </div>
 
-          {/* User Profile Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-3 px-3">
-                <span className="hidden md:block text-sm font-medium">
-                  {user.first_name} {user.last_name}
-                </span>
-                <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {getUserInitials()}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user.first_name} {user.last_name}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/settings")}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/logout")} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container px-6 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Welcome, {user.first_name}!
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your bookings and explore available fields
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Bookings
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{bookings.length}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Bookings
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-600">
-                {bookings.filter((b) => b.status === BookingStatus.CONFIRMED).length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Available Fields
-              </CardTitle>
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-purple-600">
-                {fields.length}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* My Bookings Section */}
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl">My Bookings</CardTitle>
-            <Button onClick={() => router.push("/fields")}>
-              Book a Field
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {bookingsLoading ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="mt-4 text-muted-foreground">Loading bookings...</p>
-              </div>
-            ) : bookings.length === 0 ? (
-              <div className="text-center py-12">
-                <Calendar className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">
-                  No bookings yet. Book your first field!
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Field</TableHead>
-                      <TableHead>Start Time</TableHead>
-                      <TableHead>End Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Total Price</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bookings.map((booking) => (
-                      <TableRow key={booking._id}>
-                        <TableCell className="font-medium">
-                          {getFieldName(booking.field_id)}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(booking.start_time), "MMM dd, yyyy HH:mm")}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(booking.end_time), "MMM dd, yyyy HH:mm")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusVariant(booking.status)}>
-                            {booking.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          ${booking.total_price.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {booking.status !== BookingStatus.CANCELLED && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCancelBooking(booking._id)}
-                              disabled={cancelling === booking._id}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              {cancelling === booking._id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Cancelling...
-                                </>
-                              ) : (
-                                "Cancel"
-                              )}
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Available Fields Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Available Fields</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {fields.map((field) => (
-                <Card key={field._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold">{field.name}</h3>
-                        <p className="text-sm text-muted-foreground capitalize mt-1">
-                          {field.sport_type}
-                        </p>
-                      </div>
-                      <Badge variant="outline" className="ml-2">
-                        Active
-                      </Badge>
-                    </div>
-                    {field.description && (
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {field.description}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                      <div className="flex items-center gap-1 text-primary">
-                        <DollarSign className="h-5 w-5" />
-                        <span className="text-2xl font-bold">{field.hourly_rate}</span>
-                        <span className="text-sm text-muted-foreground">/hr</span>
-                      </div>
-                      <Button onClick={() => setSelectedField(field)}>
-                        Book Now
+          {/* Right Column: Slots */}
+          <div className="md:col-span-8 space-y-4">
+            <h2 className="text-xl font-semibold">4. Orari Disponibili</h2>
+            <Card className="min-h-[500px] border-dashed shadow-sm">
+              <CardContent className="p-6">
+                {!selectedField ? (
+                  <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-20">
+                    <MapPin className="w-12 h-12 mb-4 opacity-20" />
+                    <p>Seleziona un campo per vedere gli orari</p>
+                  </div>
+                ) : isLoading ? (
+                  <div className="h-full flex items-center justify-center py-20">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : slots.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-20">
+                    <Clock className="w-12 h-12 mb-4 opacity-20" />
+                    <p>Nessun orario disponibile per questa data.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {slots.map((slot, index) => (
+                      <Button
+                        key={index}
+                        variant={slot.is_available ? (selectedSlot === slot ? "default" : "outline") : "ghost"}
+                        disabled={!slot.is_available}
+                        className={cn(
+                          "h-auto py-4 flex flex-col gap-1",
+                          !slot.is_available && "opacity-50 cursor-not-allowed bg-gray-50"
+                        )}
+                        onClick={() => slot.is_available && setSelectedSlot(slot)}
+                      >
+                        <span className="text-lg font-bold">
+                          {slot.start_time.slice(0, 5)}
+                        </span>
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {slot.price}€
+                        </span>
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Booking Modal */}
-        {selectedField && (
-          <FieldBookingModal
-            field={selectedField}
-            isOpen={!!selectedField}
-            onClose={() => setSelectedField(null)}
-          />
-        )}
-      </main>
+            <div className="flex justify-end pt-4">
+              <Button
+                size="lg"
+                disabled={!selectedSlot || !selectedField || !date}
+                onClick={() => setIsBookingModalOpen(true)}
+                className="w-full md:w-auto text-lg px-8"
+              >
+                Prenota Ora
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Conferma Prenotazione</DialogTitle>
+            <DialogDescription>
+              Rivedi i dettagli della tua prenotazione.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Sport</span>
+              <span className="font-medium capitalize">{selectedSport}</span>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Campo</span>
+              <span className="font-medium">{selectedField?.name}</span>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Data</span>
+              <span className="font-medium">{date && format(new Date(date), "d MMMM yyyy", { locale: it })}</span>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Orario</span>
+              <span className="font-medium">
+                {selectedSlot?.start_time.slice(0, 5)} - {selectedSlot?.end_time.slice(0, 5)}
+              </span>
+            </div>
+            <div className="flex justify-between pt-2">
+              <span className="text-lg font-bold">Totale</span>
+              <span className="text-lg font-bold text-primary">{selectedSlot?.price}€</span>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsBookingModalOpen(false)}>Annulla</Button>
+            <Button onClick={handleBook} disabled={isLoading}>
+              {isLoading ? "Conferma in corso..." : "Conferma e Paga"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

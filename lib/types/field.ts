@@ -2,6 +2,7 @@ export enum SportType {
   FOOTBALL = "football",
   TENNIS = "tennis",
   BASKETBALL = "basketball",
+  VOLLEYBALL = "volleyball",
   PADEL = "padel",
 }
 

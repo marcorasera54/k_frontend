@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { UserRole } from "@/lib/types/auth";
 import FieldManagerDashboard from "@/components/pages/dashboard/FieldManagerDashboard";
 import AdminDashboard from "@/components/pages/dashboard/AdminDashboard";
-import UserDashboardDemo from "@/components/pages/dashboard/UserDashboardDemo";
+import UserDashboard from "@/components/pages/dashboard/UserDashboard";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -41,6 +41,6 @@ export default function DashboardPage() {
       return <AdminDashboard user={user} />;
     case UserRole.USER:
     default:
-      return <UserDashboardDemo user={user} />;
+      return <UserDashboard user={user} />;
   }
 }
