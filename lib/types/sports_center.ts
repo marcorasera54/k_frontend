@@ -4,6 +4,12 @@ export enum SportsCenterStatus {
   MAINTENANCE = "maintenance",
 }
 
+export const SportsCenterStatusLabel: Record<SportsCenterStatus, string> = {
+  [SportsCenterStatus.ACTIVE]: "Attivo",
+  [SportsCenterStatus.INACTIVE]: "Inattivo",
+  [SportsCenterStatus.MAINTENANCE]: "Manutenzione",
+};
+
 export interface ContactInfo {
   phone?: string;
   email?: string;

@@ -96,7 +96,7 @@ export default function ManageAvailabilityModal({
       ).unwrap();
 
       alert(
-        "Operating hours created successfully! Slots will be auto-generated.",
+        "Orari di apertura creati con successo! Gli slot saranno generati automaticamente.",
       );
       setScheduleForm({
         day_of_week: DayOfWeek.MONDAY,
@@ -107,18 +107,18 @@ export default function ManageAvailabilityModal({
         },
       });
     } catch (err: any) {
-      setError(err || "Failed to create operating hours");
+      setError(err || "Impossibile creare gli orari di apertura");
     }
   };
 
   const handleDeleteSchedule = async (availabilityId: string) => {
-    if (!confirm("Are you sure you want to delete this schedule?")) return;
+    if (!confirm("Sei sicuro di voler eliminare questo orario?")) return;
 
     try {
       await dispatch(deleteAvailability(availabilityId)).unwrap();
-      alert("Schedule deleted successfully!");
+      alert("Orario eliminato con successo!");
     } catch (err: any) {
-      alert(err || "Failed to delete schedule");
+      alert(err || "Impossibile eliminare l'orario");
     }
   };
 
@@ -134,7 +134,7 @@ export default function ManageAvailabilityModal({
         }),
       ).unwrap();
 
-      alert("Time slot blocked successfully!");
+      alert("Fascia oraria bloccata con successo!");
       setBlockedForm({
         blocked_date: "",
         start_time: "09:00",
@@ -142,18 +142,18 @@ export default function ManageAvailabilityModal({
         reason: "",
       });
     } catch (err: any) {
-      setError(err || "Failed to block time slot");
+      setError(err || "Impossibile bloccare la fascia oraria");
     }
   };
 
   const handleDeleteBlockedSlot = async (blockedSlotId: string) => {
-    if (!confirm("Are you sure you want to remove this blocked slot?")) return;
+    if (!confirm("Sei sicuro di voler rimuovere questo slot bloccato?")) return;
 
     try {
       await dispatch(deleteBlockedSlot(blockedSlotId)).unwrap();
-      alert("Blocked slot removed successfully!");
+      alert("Slot bloccato rimosso con successo!");
     } catch (err: any) {
-      alert(err || "Failed to remove blocked slot");
+      alert(err || "Impossibile rimuovere lo slot bloccato");
     }
   };
 
@@ -174,12 +174,15 @@ export default function ManageAvailabilityModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Manage Availability</DialogTitle>
+          <DialogTitle className="text-2xl">Gestisci Disponibilità</DialogTitle>
           <DialogDescription>{fieldName}</DialogDescription>
         </DialogHeader>
 
         {error && (
-          <Alert variant="destructive">
+          <Alert
+            variant="destructive"
+            className="border border-gray-200 bg-white rounded transition-all duration-300 py-4 cursor-pointer"
+          >
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -191,32 +194,38 @@ export default function ManageAvailabilityModal({
             setActiveTab(value as "schedule" | "blocked")
           }
         >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="schedule" className="flex items-center gap-2">
+          <TabsList className="rounded-md grid w-full grid-cols-2">
+            <TabsTrigger
+              value="schedule"
+              className="rounded flex items-center gap-2"
+            >
               <Clock className="h-4 w-4" />
-              Operating Hours
+              Orari di Apertura
             </TabsTrigger>
-            <TabsTrigger value="blocked" className="flex items-center gap-2">
+            <TabsTrigger
+              value="blocked"
+              className="rounded flex items-center gap-2"
+            >
               <Ban className="h-4 w-4" />
-              Blocked Slots
+              Slot Bloccati
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="schedule" className="space-y-6 mt-6">
-            {/* Create Schedule Form */}
-            <Card>
+            <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
               <CardHeader>
-                <CardTitle>Set Operating Hours</CardTitle>
+                <CardTitle>Imposta Orari di Apertura</CardTitle>
                 <CardDescription>
-                  Booking slots will be automatically generated based on your
-                  operating hours.
+                  Gli slot di prenotazione verranno generati automaticamente in
+                  base ai tuoi orari di apertura.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateSchedule} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="day_of_week">
-                      Day of Week <span className="text-destructive">*</span>
+                      Giorno della Settimana{" "}
+                      <span className="text-destructive">*</span>
                     </Label>
                     <Select
                       required
@@ -228,8 +237,11 @@ export default function ManageAvailabilityModal({
                         })
                       }
                     >
-                      <SelectTrigger id="day_of_week">
-                        <SelectValue placeholder="Select day" />
+                      <SelectTrigger
+                        id="day_of_week"
+                        className="rounded h-10 border-gray-300 bg-white"
+                      >
+                        <SelectValue placeholder="Seleziona giorno" />
                       </SelectTrigger>
                       <SelectContent>
                         {Object.values(DayOfWeek).map((day) => (
@@ -244,7 +256,8 @@ export default function ManageAvailabilityModal({
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="start_time">
-                        Opening Time <span className="text-destructive">*</span>
+                        Orario di Apertura{" "}
+                        <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="start_time"
@@ -260,11 +273,13 @@ export default function ManageAvailabilityModal({
                             },
                           })
                         }
+                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="end_time">
-                        Closing Time <span className="text-destructive">*</span>
+                        Orario di Chiusura{" "}
+                        <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="end_time"
@@ -280,13 +295,14 @@ export default function ManageAvailabilityModal({
                             },
                           })
                         }
+                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="slot_duration">
-                      Slot Duration (minutes){" "}
+                      Durata Slot (minuti){" "}
                       <span className="text-destructive">*</span>
                     </Label>
                     <Select
@@ -302,55 +318,60 @@ export default function ManageAvailabilityModal({
                         })
                       }
                     >
-                      <SelectTrigger id="slot_duration">
-                        <SelectValue placeholder="Select duration" />
+                      <SelectTrigger
+                        id="slot_duration"
+                        className="rounded h-10 border-gray-300 bg-white"
+                      >
+                        <SelectValue placeholder="Seleziona durata" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="15">15 minutes</SelectItem>
-                        <SelectItem value="30">30 minutes</SelectItem>
-                        <SelectItem value="60">1 hour</SelectItem>
-                        <SelectItem value="90">1.5 hours</SelectItem>
-                        <SelectItem value="120">2 hours</SelectItem>
+                        <SelectItem value="15">15 minuti</SelectItem>
+                        <SelectItem value="30">30 minuti</SelectItem>
+                        <SelectItem value="60">1 ora</SelectItem>
+                        <SelectItem value="90">1,5 ore</SelectItem>
+                        <SelectItem value="120">2 ore</SelectItem>
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-muted-foreground">
-                      This will generate{" "}
+                      Questo genererà{" "}
                       {calculateTotalSlots(
                         scheduleForm.operating_hours.start_time,
                         scheduleForm.operating_hours.end_time,
                         scheduleForm.operating_hours.slot_duration_minutes,
                       )}{" "}
-                      slots
+                      slot
                     </p>
                   </div>
 
-                  <Button type="submit" className="w-full">
-                    Set Operating Hours
+                  <Button type="submit" className="w-full rounded">
+                    Imposta
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Existing Schedules */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Current Operating Hours
+                Orari di Apertura Attuali
               </h3>
               {isLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Loading...
+                  Caricamento...
                 </div>
               ) : availabilities.length === 0 ? (
-                <Card>
+                <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
                   <CardContent className="text-center py-8 text-muted-foreground">
-                    No operating hours configured yet
+                    Nessun orario di apertura configurato
                   </CardContent>
                 </Card>
               ) : (
                 <div className="space-y-3">
                   {availabilities.map((availability) => (
-                    <Card key={availability._id}>
-                      <CardContent className="pt-6">
+                    <Card
+                      key={availability._id}
+                      className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer"
+                    >
+                      <CardContent>
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="font-medium capitalize">
@@ -362,18 +383,19 @@ export default function ManageAvailabilityModal({
                                 {availability.operating_hours.end_time}
                               </p>
                               <p className="text-xs">
+                                Slot da{" "}
                                 {
                                   availability.operating_hours
                                     .slot_duration_minutes
                                 }{" "}
-                                min slots (
+                                min (
                                 {calculateTotalSlots(
                                   availability.operating_hours.start_time,
                                   availability.operating_hours.end_time,
                                   availability.operating_hours
                                     .slot_duration_minutes,
                                 )}{" "}
-                                slots total)
+                                slot totali)
                               </p>
                             </div>
                           </div>
@@ -397,20 +419,19 @@ export default function ManageAvailabilityModal({
           </TabsContent>
 
           <TabsContent value="blocked" className="space-y-6 mt-6">
-            {/* Create Blocked Slot Form */}
-            <Card>
+            <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
               <CardHeader>
-                <CardTitle>Block Time Slot</CardTitle>
+                <CardTitle>Blocca Fascia Oraria</CardTitle>
                 <CardDescription>
-                  Block specific time slots for maintenance, events, or other
-                  reasons.
+                  Blocca fasce orarie specifiche per manutenzione, eventi o
+                  altri motivi.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateBlockedSlot} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="blocked_date">
-                      Date <span className="text-destructive">*</span>
+                      Data <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="blocked_date"
@@ -423,13 +444,14 @@ export default function ManageAvailabilityModal({
                           blocked_date: e.target.value,
                         })
                       }
+                      className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="blocked_start_time">
-                        Start Time <span className="text-destructive">*</span>
+                        Ora Inizio <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="blocked_start_time"
@@ -442,11 +464,12 @@ export default function ManageAvailabilityModal({
                             start_time: e.target.value,
                           })
                         }
+                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="blocked_end_time">
-                        End Time <span className="text-destructive">*</span>
+                        Ora Fine <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="blocked_end_time"
@@ -459,12 +482,13 @@ export default function ManageAvailabilityModal({
                             end_time: e.target.value,
                           })
                         }
+                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="reason">Reason (Optional)</Label>
+                    <Label htmlFor="reason">Motivo (Facoltativo)</Label>
                     <Input
                       id="reason"
                       type="text"
@@ -475,30 +499,30 @@ export default function ManageAvailabilityModal({
                           reason: e.target.value,
                         })
                       }
-                      placeholder="e.g., Maintenance, Private Event, etc."
+                      placeholder="es., Manutenzione, Evento Privato, ecc."
+                      className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
                     />
                   </div>
 
-                  <Button type="submit" className="w-full">
-                    Block Time Slot
+                  <Button type="submit" className="rounded w-full">
+                    Blocca
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Existing Blocked Slots */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Blocked Time Slots
+                Fasce Orarie Bloccate
               </h3>
               {isLoading ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Loading...
+                  Caricamento...
                 </div>
               ) : blockedSlots.length === 0 ? (
-                <Card>
+                <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
                   <CardContent className="text-center py-8 text-muted-foreground">
-                    No blocked time slots
+                    Nessuna fascia oraria bloccata
                   </CardContent>
                 </Card>
               ) : (
@@ -511,7 +535,7 @@ export default function ManageAvailabilityModal({
                             <h4 className="font-medium">
                               {new Date(
                                 blocked.blocked_date,
-                              ).toLocaleDateString()}
+                              ).toLocaleDateString("it-IT")}
                             </h4>
                             <p className="text-sm text-muted-foreground mt-1">
                               {blocked.start_time} - {blocked.end_time}
@@ -540,9 +564,13 @@ export default function ManageAvailabilityModal({
           </TabsContent>
         </Tabs>
 
-        <div className="pt-4 border-t">
-          <Button variant="outline" onClick={onClose} className="w-full">
-            Close
+        <div className="pt-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="rounded w-full"
+          >
+            Chiudi
           </Button>
         </div>
       </DialogContent>

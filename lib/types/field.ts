@@ -1,9 +1,8 @@
 export enum SportType {
   FOOTBALL = "football",
-  BASKETBALL = "basketball",
   TENNIS = "tennis",
-  VOLLEYBALL = "volleyball",
-  BADMINTON = "badminton",
+  BASKETBALL = "basketball",
+  PADEL = "padel",
 }
 
 export interface Field {

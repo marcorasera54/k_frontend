@@ -2,7 +2,10 @@
 import { useState } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { createSportsCenter } from "@/components/api/connectors/sportsCenterApi";
-import { SportsCenterStatus } from "@/lib/types/sports_center";
+import {
+  SportsCenterStatus,
+  SportsCenterStatusLabel,
+} from "@/lib/types/sports_center";
 import {
   Dialog,
   DialogContent,
@@ -70,7 +73,7 @@ export default function CreateSportsCenterModal({
         }),
       ).unwrap();
 
-      alert("Sports center created successfully!");
+      alert("Centro sportivo creato con successo!");
       onClose();
       setFormData({
         name: "",
@@ -85,7 +88,7 @@ export default function CreateSportsCenterModal({
         },
       });
     } catch (err: any) {
-      setError(err || "Failed to create sports center");
+      setError(err || "Impossibile creare il centro sportivo");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,10 +99,10 @@ export default function CreateSportsCenterModal({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            Create New Sports Center
+            Crea Nuovo Centro Sportivo
           </DialogTitle>
           <DialogDescription>
-            Add a new sports center to your organization
+            Aggiungi un nuovo centro sportivo alla tua organizzazione
           </DialogDescription>
         </DialogHeader>
 
@@ -114,15 +117,8 @@ export default function CreateSportsCenterModal({
           {/* Basic Information */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Basic Information
-              </h3>
-              <div className="h-px bg-border" />
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="name">
-                Center Name <span className="text-destructive">*</span>
+                Nome Centro <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="name"
@@ -132,12 +128,13 @@ export default function CreateSportsCenterModal({
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                placeholder="e.g., Downtown Sports Complex"
+                placeholder="Complesso Sportivo Centro"
+                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Descrizione</Label>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -145,12 +142,13 @@ export default function CreateSportsCenterModal({
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={3}
-                placeholder="Brief description of your sports center..."
+                placeholder="Breve descrizione del tuo centro sportivo..."
+                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="logo_url">Logo URL</Label>
+              <Label htmlFor="logo_url">URL Logo</Label>
               <Input
                 id="logo_url"
                 type="url"
@@ -158,13 +156,14 @@ export default function CreateSportsCenterModal({
                 onChange={(e) =>
                   setFormData({ ...formData, logo_url: e.target.value })
                 }
-                placeholder="https://example.com/logo.png"
+                placeholder="https://esempio.com/logo.png"
+                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="status">
-                Status <span className="text-destructive">*</span>
+                Stato <span className="text-destructive">*</span>
               </Label>
               <Select
                 required
@@ -176,13 +175,16 @@ export default function CreateSportsCenterModal({
                   })
                 }
               >
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="Select status" />
+                <SelectTrigger
+                  id="status"
+                  className="rounded h-10 border-gray-300 bg-white"
+                >
+                  <SelectValue placeholder="Seleziona stato" />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(SportsCenterStatus).map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                      {SportsCenterStatusLabel[status]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -192,16 +194,9 @@ export default function CreateSportsCenterModal({
 
           {/* Contact Information */}
           <div className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                Contact Information
-              </h3>
-              <div className="h-px bg-border" />
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">Telefono</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -215,7 +210,8 @@ export default function CreateSportsCenterModal({
                       },
                     })
                   }
-                  placeholder="+1 234 567 8900"
+                  placeholder="+39 123 456 7890"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
                 />
               </div>
 
@@ -234,12 +230,13 @@ export default function CreateSportsCenterModal({
                       },
                     })
                   }
-                  placeholder="contact@example.com"
+                  placeholder="contatto@esempio.com"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="website">Website</Label>
+                <Label htmlFor="website">Sito Web</Label>
                 <Input
                   id="website"
                   type="url"
@@ -253,12 +250,13 @@ export default function CreateSportsCenterModal({
                       },
                     })
                   }
-                  placeholder="https://example.com"
+                  placeholder="https://esempio.com"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address">Indirizzo</Label>
                 <Input
                   id="address"
                   type="text"
@@ -272,7 +270,8 @@ export default function CreateSportsCenterModal({
                       },
                     })
                   }
-                  placeholder="123 Main St, City, State"
+                  placeholder="Via Roma 123, Città, Provincia"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -283,15 +282,19 @@ export default function CreateSportsCenterModal({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="rounded flex-1"
             >
-              Cancel
+              Annulla
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="flex-1">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="rounded flex-1"
+            >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isSubmitting ? "Creating..." : "Create Sports Center"}
+              {isSubmitting ? "Creazione..." : "Crea"}
             </Button>
           </div>
         </form>

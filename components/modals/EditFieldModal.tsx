@@ -81,10 +81,10 @@ export default function EditFieldModal({
         }),
       ).unwrap();
 
-      alert("Field updated successfully!");
+      alert("Campo aggiornato con successo!");
       onClose();
     } catch (err: any) {
-      setError(err || "Failed to update field");
+      setError(err || "Impossibile aggiornare il campo");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,9 +94,9 @@ export default function EditFieldModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Edit Field</DialogTitle>
+          <DialogTitle className="text-2xl">Modifica Campo</DialogTitle>
           <DialogDescription>
-            Update the details of your sports field
+            Aggiorna i dettagli del tuo campo sportivo
           </DialogDescription>
         </DialogHeader>
 
@@ -110,7 +110,7 @@ export default function EditFieldModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="sports_center">
-              Sports Center <span className="text-destructive">*</span>
+              Centro Sportivo <span className="text-destructive">*</span>
             </Label>
             <Select
               required
@@ -119,8 +119,11 @@ export default function EditFieldModal({
                 setFormData({ ...formData, sports_center_id: value })
               }
             >
-              <SelectTrigger id="sports_center">
-                <SelectValue placeholder="Select sports center" />
+              <SelectTrigger
+                id="sports_center"
+                className="rounded h-10 border-gray-300 bg-white"
+              >
+                <SelectValue placeholder="Seleziona centro sportivo" />
               </SelectTrigger>
               <SelectContent>
                 {sportsCenters.map((center) => (
@@ -134,7 +137,7 @@ export default function EditFieldModal({
 
           <div className="space-y-2">
             <Label htmlFor="field_name">
-              Field Name <span className="text-destructive">*</span>
+              Nome Campo <span className="text-destructive">*</span>
             </Label>
             <Input
               id="field_name"
@@ -144,12 +147,13 @@ export default function EditFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="sport_type">
-              Sport Type <span className="text-destructive">*</span>
+              Tipo di Sport <span className="text-destructive">*</span>
             </Label>
             <Select
               required
@@ -161,8 +165,11 @@ export default function EditFieldModal({
                 })
               }
             >
-              <SelectTrigger id="sport_type">
-                <SelectValue placeholder="Select sport type" />
+              <SelectTrigger
+                id="sport_type"
+                className="rounded h-10 border-gray-300 bg-white"
+              >
+                <SelectValue placeholder="Seleziona tipo di sport" />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(SportType).map((type) => (
@@ -176,7 +183,7 @@ export default function EditFieldModal({
 
           <div className="space-y-2">
             <Label htmlFor="hourly_rate">
-              Hourly Rate ($) <span className="text-destructive">*</span>
+              Tariffa Oraria (€) <span className="text-destructive">*</span>
             </Label>
             <Input
               id="hourly_rate"
@@ -188,11 +195,12 @@ export default function EditFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, hourly_rate: e.target.value })
               }
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Descrizione</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -200,6 +208,8 @@ export default function EditFieldModal({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+              placeholder="Descrizione..."
             />
           </div>
 
@@ -215,7 +225,7 @@ export default function EditFieldModal({
               htmlFor="is_active_edit"
               className="text-sm font-normal cursor-pointer"
             >
-              Field is active and available for booking
+              Il campo è attivo e disponibile per la prenotazione
             </Label>
           </div>
 
@@ -224,15 +234,15 @@ export default function EditFieldModal({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="rounded flex-1"
             >
-              Cancel
+              Annulla
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="flex-1">
+            <Button type="submit" disabled={isSubmitting} className="rounded flex-1">
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isSubmitting ? "Updating..." : "Update Field"}
+              {isSubmitting ? "Aggiornamento..." : "Aggiorna Campo"}
             </Button>
           </div>
         </form>

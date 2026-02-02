@@ -36,6 +36,8 @@ import {
   Settings,
   Users,
   Loader2,
+  CheckCheckIcon,
+  CheckIcon,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -77,7 +79,6 @@ export default function FieldManagerDashboard({
   );
   const { bookings } = useAppSelector((state) => state.bookings);
 
-  const [activeTab, setActiveTab] = useState<"centers" | "fields">("centers");
   const [isCreateCenterModalOpen, setIsCreateCenterModalOpen] = useState(false);
   const [isCreateFieldModalOpen, setIsCreateFieldModalOpen] = useState(false);
   const [editingField, setEditingField] = useState<Field | null>(null);
@@ -121,17 +122,6 @@ export default function FieldManagerDashboard({
     } finally {
       setDeleting(null);
     }
-  };
-
-  const getSportTypeColor = (sportType: SportType) => {
-    const colors: Record<SportType, { bg: string; text: string }> = {
-      [SportType.FOOTBALL]: { bg: "bg-emerald-50", text: "text-emerald-700" },
-      [SportType.BASKETBALL]: { bg: "bg-orange-50", text: "text-orange-700" },
-      [SportType.TENNIS]: { bg: "bg-amber-50", text: "text-amber-700" },
-      [SportType.VOLLEYBALL]: { bg: "bg-blue-50", text: "text-blue-700" },
-      [SportType.BADMINTON]: { bg: "bg-violet-50", text: "text-violet-700" },
-    };
-    return colors[sportType] || { bg: "bg-slate-50", text: "text-slate-700" };
   };
 
   const activeFields = fields.filter((f) => f.is_active);
@@ -270,13 +260,18 @@ export default function FieldManagerDashboard({
 
         {/* Main Content */}
         <div className="space-y-6">
-          <Button
-            onClick={() => setIsCreateCenterModalOpen(true)}
-            className="bg-slate-900 hover:bg-slate-800"
-          >
-            <Plus className="w-4 h-4" />
-            Aggiungi Centro
-          </Button>
+          <div className="flex justify-between">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+              Centri Sportivi
+            </h1>
+            <Button
+              onClick={() => setIsCreateCenterModalOpen(true)}
+              className="rounded bg-slate-900 hover:bg-slate-800"
+            >
+              <Plus className="w-4 h-4" />
+              Aggiungi Centro
+            </Button>
+          </div>
           {centersLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
               <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -331,22 +326,6 @@ export default function FieldManagerDashboard({
                           <CardTitle className="text-xl font-semibold text-slate-900">
                             {center.name}
                           </CardTitle>
-                          <Badge
-                            variant="secondary"
-                            className={
-                              center.status === "active"
-                                ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                                : center.status === "maintenance"
-                                  ? "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                                  : "bg-slate-50 text-slate-700 hover:bg-slate-100"
-                            }
-                          >
-                            {center.status === "active"
-                              ? "Attivo"
-                              : center.status === "maintenance"
-                                ? "Manutenzione"
-                                : "Inattivo"}
-                          </Badge>
                         </div>
                         {center.description && (
                           <CardDescription className="text-sm">
@@ -375,15 +354,23 @@ export default function FieldManagerDashboard({
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
+                        variant="outline"
                         onClick={() => setIsCreateFieldModalOpen(true)}
-                        className="bg-slate-900 hover:bg-slate-800"
+                        className="rounded"
                       >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Aggiungi Campo
+                        <Plus className="w-4 h-4" />
+                        Aggiungi
                       </Button>
                       <Button
+                        variant="outline"
+                        onClick={() => setIsCreateFieldModalOpen(true)}
+                        className="rounded group/btn"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Modifica
+                      </Button>{" "}
+                      <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() =>
                           setDeleteDialog({
                             isOpen: true,
@@ -393,17 +380,16 @@ export default function FieldManagerDashboard({
                           })
                         }
                         disabled={deleting === center._id}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="rounded text-red-600 hover:text-red-700 border border-red-300 hover:bg-red-50"
                       >
                         {deleting === center._id ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Eliminazione...
+                            <Loader2 className="w-4 h-4 animate-spin" />
                           </>
                         ) : (
                           <>
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Elimina Centro
+                            <Trash2 className="w-4 h-4" />
+                            Elimina
                           </>
                         )}
                       </Button>
@@ -412,7 +398,10 @@ export default function FieldManagerDashboard({
                 </CardHeader>
 
                 {/* Center Fields */}
-                <CardContent className="p-6">
+                <CardContent className="px-6">
+                  <h1 className="text-2xl mb-4 font-semibold tracking-tight text-slate-900">
+                    Campi
+                  </h1>
                   {fieldsLoading ? (
                     <div className="flex flex-col items-center justify-center py-12">
                       <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -434,108 +423,85 @@ export default function FieldManagerDashboard({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                       {fields
                         .filter((f) => f.sports_center_id === center._id)
                         .map((field) => {
-                          const sportColor = getSportTypeColor(
-                            field.sport_type,
-                          );
                           return (
                             <Card
                               key={field._id}
-                              className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer overflow-hidden"
+                              className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 p-0 overflow-hidden cursor-pointer"
                             >
-                              <CardContent>
+                              <div className="relative h-40 overflow-hidden bg-muted">
                                 <Image
-                                  src={
-                                    "https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                  }
-                                  alt={`${center.name} logo`}
-                                  width={80}
-                                  height={80}
-                                  className="w-20 h-20 object-contain rounded-md border bg-white p-2"
+                                  src="https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                  alt={`${field.name}`}
+                                  width={400}
+                                  height={160}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                 />
-                                {/* Field Header */}
-                                <div className="flex items-start justify-between mb-4">
-                                  <div className="flex-1">
-                                    <h3 className="font-semibold text-slate-900 text-lg mb-1 group-hover:text-slate-700 transition-colors">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+                                <Badge
+                                  variant="secondary"
+                                  className={`absolute top-3 right-3 ${
+                                    field.is_active
+                                      ? "bg-emerald-500 text-white"
+                                      : "bg-slate-500 text-white"
+                                  }`}
+                                >
+                                  {field.is_active ? "Attivo" : "Inattivo"}
+                                </Badge>
+                              </div>
+
+                              <CardContent className="px-4 pb-4 flex flex-col h-38">
+                                <div className="mb-4">
+                                  <div className="flex justify-between">
+                                    <h3 className="font-semibold text-lg text-foreground line-clamp-1">
                                       {field.name}
                                     </h3>
-                                    {field.description && (
-                                      <p className="text-sm text-slate-500 line-clamp-2">
-                                        {field.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <Badge
-                                    variant="secondary"
-                                    className={
-                                      field.is_active
-                                        ? "bg-emerald-50 text-emerald-700 border-0"
-                                        : "bg-slate-100 text-slate-600 border-0"
-                                    }
-                                  >
-                                    {field.is_active ? "Attivo" : "Inattivo"}
-                                  </Badge>
-                                </div>
-
-                                {/* Field Info */}
-                                <div className="space-y-3 mb-4">
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">
-                                      Tipo Sport
-                                    </span>
-                                    <Badge
-                                      variant="secondary"
-                                      className={`${sportColor.bg} ${sportColor.text} border-0`}
-                                    >
-                                      {field.sport_type}
-                                    </Badge>
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">
-                                      Tariffa Oraria
-                                    </span>
-                                    <span className="text-lg font-bold text-slate-900">
-                                      €{field.hourly_rate.toFixed(2)}
-                                      <span className="text-sm font-normal text-slate-500">
+                                    <div className="flex items-baseline gap-1">
+                                      <span className="text-xl font-semibold text-foreground">
+                                        €{field.hourly_rate.toFixed(2)}
+                                      </span>
+                                      <span className="text-sm text-muted-foreground">
                                         /ora
                                       </span>
-                                    </span>
+                                    </div>
                                   </div>
+                                  {field.description && (
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                      {field.description}
+                                    </p>
+                                  )}
                                 </div>
-
-                                {/* Actions */}
-                                <div className="pt-4 border-t border-gray-100 space-y-2">
+                                <div className="space-y-2 mt-auto">
                                   <div className="grid grid-cols-2 gap-2">
                                     <Button
                                       variant="outline"
-                                      size="sm"
                                       onClick={() =>
                                         setManagingAvailabilityField({
                                           id: field._id,
                                           name: field.name,
                                         })
                                       }
-                                      className="text-violet-600 hover:text-violet-700 hover:bg-violet-50 border-violet-200"
+                                      className="h-8 rounded"
                                     >
-                                      <Calendar className="w-4 h-4 mr-1.5" />
+                                      <Calendar className="w-4 h-4" />
                                       Disponibilità
                                     </Button>
                                     <Button
                                       variant="outline"
-                                      size="sm"
                                       onClick={() => setEditingField(field)}
-                                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200"
+                                      className="h-8 rounded"
                                     >
-                                      <Edit2 className="w-4 h-4 mr-1.5" />
+                                      <Edit2 className="w-4 h-4" />
                                       Modifica
                                     </Button>
                                   </div>
+
                                   <Button
                                     variant="ghost"
-                                    size="sm"
                                     onClick={() =>
                                       setDeleteDialog({
                                         isOpen: true,
@@ -545,17 +511,17 @@ export default function FieldManagerDashboard({
                                       })
                                     }
                                     disabled={deleting === field._id}
-                                    className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    className="rounded h-8 w-full text-destructive hover:text-destructive hover:bg-destructive/10 border border-red-300"
                                   >
                                     {deleting === field._id ? (
                                       <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        <Loader2 className="w-4 h-4 animate-spin" />
                                         Eliminazione...
                                       </>
                                     ) : (
                                       <>
-                                        <Trash2 className="w-4 h-4 mr-2" />
-                                        Elimina Campo
+                                        <Trash2 className="w-4 h-4" />
+                                        Elimina
                                       </>
                                     )}
                                   </Button>

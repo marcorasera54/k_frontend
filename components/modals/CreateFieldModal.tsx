@@ -76,7 +76,7 @@ export default function CreateFieldModal({
         is_active: true,
       });
     } catch (err: any) {
-      setError(err || "Failed to create field");
+      setError(err || "Impossibile creare il campo");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,11 +94,11 @@ export default function CreateFieldModal({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            Create New Field
+            Crea Nuovo Campo
           </DialogTitle>
           <DialogDescription>
-            Add a new field to one of your sports centers. All fields marked
-            with * are required.
+            Aggiungi un nuovo campo a uno dei tuoi centri sportivi. Tutti i
+            campi contrassegnati con * sono obbligatori.
           </DialogDescription>
         </DialogHeader>
 
@@ -112,7 +112,7 @@ export default function CreateFieldModal({
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="sports_center_id">
-              Sports Center <span className="text-red-500">*</span>
+              Centro Sportivo <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.sports_center_id}
@@ -121,13 +121,16 @@ export default function CreateFieldModal({
               }
               required
             >
-              <SelectTrigger id="sports_center_id">
-                <SelectValue placeholder="Select a sports center" />
+              <SelectTrigger
+                id="sports_center_id"
+                className="rounded h-10 border-gray-300 bg-white"
+              >
+                <SelectValue placeholder="Seleziona un centro sportivo" />
               </SelectTrigger>
               <SelectContent>
                 {sportsCenters.length === 0 ? (
                   <div className="px-2 py-6 text-center text-sm text-slate-500">
-                    No sports centers available
+                    Nessun centro sportivo disponibile
                   </div>
                 ) : (
                   sportsCenters.map((center) => (
@@ -140,14 +143,14 @@ export default function CreateFieldModal({
             </Select>
             {sportsCenters.length === 0 && (
               <p className="text-sm text-slate-500">
-                Please create a sports center first
+                Crea prima un centro sportivo
               </p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="name">
-              Field Name <span className="text-red-500">*</span>
+              Nome Campo <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
@@ -157,13 +160,14 @@ export default function CreateFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              placeholder="e.g., Main Football Field"
+              placeholder="Campo Calcio Principale"
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="sport_type">
-              Sport Type <span className="text-red-500">*</span>
+              Tipo di Sport <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.sport_type}
@@ -175,7 +179,10 @@ export default function CreateFieldModal({
               }
               required
             >
-              <SelectTrigger id="sport_type">
+              <SelectTrigger
+                id="sport_type"
+                className="rounded h-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -190,7 +197,7 @@ export default function CreateFieldModal({
 
           <div className="space-y-2">
             <Label htmlFor="hourly_rate">
-              Hourly Rate ($) <span className="text-red-500">*</span>
+              Tariffa Oraria (€) <span className="text-red-500">*</span>
             </Label>
             <Input
               id="hourly_rate"
@@ -202,12 +209,13 @@ export default function CreateFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, hourly_rate: e.target.value })
               }
-              placeholder="e.g., 50.00"
+              placeholder="50.00"
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Descrizione</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -215,8 +223,8 @@ export default function CreateFieldModal({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
-              placeholder="Optional description of the field..."
-              className="resize-none"
+              placeholder="Descrizione facoltativa del campo..."
+              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
             />
           </div>
 
@@ -232,34 +240,34 @@ export default function CreateFieldModal({
               htmlFor="is_active"
               className="text-sm font-normal cursor-pointer"
             >
-              Field is active and available for booking
+              Il campo è attivo e disponibile per la prenotazione
             </Label>
           </div>
-
-          <DialogFooter className="gap-2 sm:gap-0">
+          <div className="flex gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
+              className="rounded flex-1"
             >
-              Cancel
+              Annulla
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || sportsCenters.length === 0}
-              className="bg-slate-900 hover:bg-slate-800"
+              className="rounded flex-1 bg-slate-900 hover:bg-slate-800"
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  Creazione in corso...
                 </>
               ) : (
-                "Create Field"
+                "Crea Campo"
               )}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
