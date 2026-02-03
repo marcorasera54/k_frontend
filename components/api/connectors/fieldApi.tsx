@@ -40,7 +40,7 @@ export const createField = createAsyncThunk<
   { rejectValue: string }
 >("fields/createField", async (fieldData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Field>("/fields", fieldData);
+    const response = await api.post<Field>("/fields/", fieldData);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to create field";

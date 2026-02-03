@@ -8,12 +8,14 @@ import {
 
 export const fetchSportsCenters = createAsyncThunk<
   SportsCenter[],
-  { manager_id?: string },
+  { manager_id?: string; sport_type?: string; search?: string },
   { rejectValue: string }
 >("sportsCenters/fetchSportsCenters", async (params, { rejectWithValue }) => {
   try {
     const queryParams = new URLSearchParams();
     if (params.manager_id) queryParams.append("manager_id", params.manager_id);
+    if (params.sport_type) queryParams.append("sport_type", params.sport_type);
+    if (params.search) queryParams.append("search", params.search);
 
     const response = await api.get<SportsCenter[]>(
       `/sports-centers?${queryParams.toString()}`

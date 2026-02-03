@@ -9,7 +9,7 @@ import {
   fetchFieldBlockedSlots,
   deleteBlockedSlot,
 } from "@/components/api/connectors/availabilityApi";
-import { DayOfWeek } from "@/lib/types/availability";
+import { DayOfWeek, DayOfWeekLabel } from "@/lib/types/availability";
 import {
   Dialog,
   DialogContent,
@@ -246,7 +246,7 @@ export default function ManageAvailabilityModal({
                       <SelectContent>
                         {Object.values(DayOfWeek).map((day) => (
                           <SelectItem key={day} value={day}>
-                            {day.charAt(0).toUpperCase() + day.slice(1)}
+                            {DayOfWeekLabel[day]}
                           </SelectItem>
                         ))}
                       </SelectContent>

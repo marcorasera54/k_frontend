@@ -577,15 +577,17 @@ export default function FieldManagerDashboard({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Sei assolutamente sicuro?</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteDialog.type === "center"
-                ? `This will permanently delete the sports center "${deleteDialog.name}" and all associated fields. This action cannot be undone.`
-                : `This will permanently delete the field "${deleteDialog.name}". This action cannot be undone.`}
+                ? `Questa azione eliminerà definitivamente il centro sportivo "${deleteDialog.name}" e tutti i campi associati. Questa azione non può essere annullata.`
+                : `Questa azione eliminerà definitivamente il campo "${deleteDialog.name}". Questa azione non può essere annullata.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={!!deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={!!deleting} className="rounded">
+              Annulla
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 deleteDialog.type === "center"
@@ -593,15 +595,15 @@ export default function FieldManagerDashboard({
                   : handleDeleteField(deleteDialog.id)
               }
               disabled={!!deleting}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 rounded"
             >
               {deleting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
+                  Eliminazione in corso...
                 </>
               ) : (
-                "Delete"
+                "Elimina"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

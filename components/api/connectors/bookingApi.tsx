@@ -37,7 +37,7 @@ export const createBooking = createAsyncThunk<
   { rejectValue: string }
 >("bookings/createBooking", async (bookingData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Booking>("/bookings", bookingData);
+    const response = await api.post<Booking>("/bookings/", bookingData);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to create booking";

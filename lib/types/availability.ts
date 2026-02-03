@@ -8,6 +8,16 @@ export enum DayOfWeek {
   SUNDAY = "sunday",
 }
 
+export const DayOfWeekLabel: Record<DayOfWeek, string> = {
+  [DayOfWeek.MONDAY]: "Lunedì",
+  [DayOfWeek.TUESDAY]: "Martedì",
+  [DayOfWeek.WEDNESDAY]: "Mercoledì",
+  [DayOfWeek.THURSDAY]: "Giovedì",
+  [DayOfWeek.FRIDAY]: "Venerdì",
+  [DayOfWeek.SATURDAY]: "Sabato",
+  [DayOfWeek.SUNDAY]: "Domenica",
+};
+
 export interface OperatingHours {
   start_time: string;
   end_time: string;
