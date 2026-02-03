@@ -10,7 +10,6 @@ import { fetchFields } from "@/components/api/connectors/fieldApi";
 import { BookingStatus } from "@/lib/types/booking";
 import { User } from "@/lib/types/auth";
 import { format } from "date-fns";
-import FieldBookingModal from "@/components/modals/FieldBookingModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -253,65 +252,6 @@ export default function UserDashboard({ user }: UserDashboardProps) {
             )}
           </CardContent>
         </Card>
-
-        {/* Available Fields Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Available Fields</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {fields.map((field) => (
-                <Card
-                  key={field._id}
-                  className="overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold">{field.name}</h3>
-                        <p className="text-sm text-muted-foreground capitalize mt-1">
-                          {field.sport_type}
-                        </p>
-                      </div>
-                      <Badge variant="outline" className="ml-2">
-                        Active
-                      </Badge>
-                    </div>
-                    {field.description && (
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {field.description}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                      <div className="flex items-center gap-1 text-primary">
-                        <DollarSign className="h-5 w-5" />
-                        <span className="text-2xl font-bold">
-                          {field.hourly_rate}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          /hr
-                        </span>
-                      </div>
-                      <Button onClick={() => setSelectedField(field)}>
-                        Book Now
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Booking Modal */}
-        {selectedField && (
-          <FieldBookingModal
-            field={selectedField}
-            isOpen={!!selectedField}
-            onClose={() => setSelectedField(null)}
-          />
-        )}
       </div>
     </div>
   );
