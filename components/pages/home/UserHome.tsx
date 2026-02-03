@@ -6,13 +6,17 @@ import {
   User as UserIcon,
   LogOut,
   Search,
-  X,
+  Sparkles,
+  TrendingUp,
+  Clock,
+  Star,
   Phone,
-  Globe,
-  Mail,
-  AlertCircle,
   ChevronRight,
   Building2,
+  AlertCircle,
+  X,
+  Globe,
+  Mail,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,12 +34,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getUserInitials } from "@/lib/utils";
-import { User, UserRole } from "@/lib/types/auth";
+import { User } from "@/lib/types/auth";
 import { useRouter } from "next/navigation";
 import { fetchSportsCenters } from "@/components/api/connectors/sportsCenterApi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
-import Image from "next/image";
 
 interface UserHomeProps {
   user: User;
@@ -51,6 +54,7 @@ export default function UserHome({ user }: UserHomeProps) {
 
   const [selectedSport, setSelectedSport] = useState<SportType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showBecomeManagerModal, setShowBecomeManagerModal] = useState(false);
 
   useEffect(() => {
     dispatch(
@@ -85,134 +89,105 @@ export default function UserHome({ user }: UserHomeProps) {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+    <div className="w-full min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-16 items-center justify-between px-6">
           {/* Logo and Name */}
-          <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push("/")}>
-            <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-sm">
-              <Image
-                src="/images/logo.jpg"
-                alt="SpotField Logo"
-                fill
-                className="object-cover"
-              />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <span className="text-xl font-bold">C</span>
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
-              SpotField
-            </span>
+            <span className="text-xl font-semibold">Nome</span>
           </div>
-
-          {/* Search Bar - Centered */}
-          <div className="flex-1 max-w-xl mx-4 hidden md:block">
-            <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-              <Input
-                type="search"
-                placeholder="Cerca centri sportivi..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 w-full bg-slate-100 border-transparent focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-500/10 rounded-2xl transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Mobile Search Icon (only visible on small screens) */}
-          <Button variant="ghost" size="icon" className="md:hidden rounded-full">
-            <Search className="h-5 w-5 text-slate-600" />
-          </Button>
 
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 pl-2 pr-1 rounded-full hover:bg-slate-100 focus:ring-0 focus:ring-offset-0"
+                className="flex items-center justify-end gap-3 px-3 min-w-40 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:bg-transparent"
               >
-                <div className="hidden sm:flex flex-col items-end mr-1">
-                  <span className="text-sm font-semibold text-slate-700 leading-none">
-                    {user.first_name}
-                  </span>
-                </div>
-                <Avatar className="h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-200">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-medium">
+                <span className="hidden md:block text-sm font-medium">
+                  {user.first_name} {user.last_name}
+                </span>
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="bg-primary text-primary-foreground">
                     {getUserInitials(user)}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-lg border-slate-100 p-2">
-              <DropdownMenuLabel className="px-2 py-1.5">
+            <DropdownMenuContent align="end" className="w-56 rounded shadow-sm">
+              <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-medium leading-none">
                     {user.first_name} {user.last_name}
                   </p>
-                  <p className="text-xs text-slate-500 font-normal">
+                  <p className="text-xs leading-none text-muted-foreground">
                     {user.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator className="-mx-1 my-1" />
+              <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="rounded-xl px-2 py-2 cursor-pointer hover:bg-slate-50 text-slate-600 focus:bg-blue-50 focus:text-blue-700"
+                className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => router.push("/profile")}
               >
                 <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profilo</span>
+                <span>Profile</span>
               </DropdownMenuItem>
-              {user.role === UserRole.ADMIN && (
-                <DropdownMenuItem
-                  className="rounded-xl px-2 py-2 cursor-pointer hover:bg-slate-50 text-slate-600 focus:bg-blue-50 focus:text-blue-700"
-                  onClick={() => router.push("/admin/requests")}
-                >
-                  <Building2 className="mr-2 h-4 w-4" />
-                  <span>Gestione Richieste</span>
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem
                 onClick={() => router.push("/logout")}
-                className="rounded-xl px-2 py-2 cursor-pointer text-red-600 hover:bg-red-50 focus:bg-red-50 focus:text-red-700"
+                className="text-red-500 hover:bg-gray-50 cursor-pointer"
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Disconnetti</span>
+                <LogOut className="mr-2 h-4 w-4 text-red-500" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-
-        {/* Banner Section */}
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl h-[300px] md:h-[400px]">
-          <div className="absolute inset-0">
-            <Image
+      {/* Main Content */}
+      <div className="max-w-400 mx-auto p-6 lg:p-8 space-y-8">
+        <div className="relative mb-8 rounded overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img
               src="https://images.unsplash.com/photo-1551958219-acbc608c6377?w=1200&auto=format&fit=crop"
               alt="Sports background"
-              fill
-              className="object-cover"
-              priority
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 via-blue-900/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
           </div>
 
-          <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-12 max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-4 drop-shadow-sm">
-              Trova il tuo <br />
-              <span className="text-blue-400">Campo Perfetto</span>
+          {/* Content */}
+          <div className="relative z-10 p-8 lg:p-12">
+            <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">
+              Trova il tuo campo perfetto
             </h1>
-            <p className="text-blue-100 text-lg md:text-xl font-medium max-w-xl leading-relaxed">
-              Prenota campi sportivi in pochi click. <br className="hidden md:block" />
-              Semplice, veloce e sicuro con SpotField.
+            <p className="text-white/90 text-lg mb-6">
+              Prenota campi sportivi in pochi click. Semplice, veloce e sicuro.
             </p>
+
+            {/* Search Bar */}
+            <form className="max-w-2xl">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Cerca centri sportivi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-12 bg-white rounded"
+                />
+              </div>
+            </form>
           </div>
         </div>
 
         {/* Sport Selection */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold tracking-tight">
               Scegli il tuo sport
             </h2>
             {selectedSport && (
@@ -220,78 +195,73 @@ export default function UserHome({ user }: UserHomeProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setSelectedSport(null)}
-                className="rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                className="rounded"
               >
-                <X className="h-4 w-4 mr-1" />
+                <X className="h-4 w-4 mr-2" />
                 Mostra tutti
               </Button>
             )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {sports.map((sport) => {
               const sportImages = {
-                [SportType.FOOTBALL]: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80",
-                [SportType.PADEL]: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&q=80",
-                [SportType.TENNIS]: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400&q=80",
-                [SportType.BASKETBALL]: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80",
-                [SportType.VOLLEYBALL]: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&q=80",
+                [SportType.FOOTBALL]:
+                  "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&auto=format&fit=crop",
+                [SportType.PADEL]:
+                  "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&auto=format&fit=crop",
+                [SportType.TENNIS]:
+                  "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400&auto=format&fit=crop",
+                [SportType.BASKETBALL]:
+                  "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&auto=format&fit=crop",
+                [SportType.VOLLEYBALL]:
+                  "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&auto=format&fit=crop",
               };
 
-              const isSelected = selectedSport === sport.type;
-
               return (
-                <div
+                <Card
                   key={sport.type}
                   className={cn(
-                    "group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] transition-all duration-300",
-                    isSelected ? "ring-4 ring-blue-500 ring-offset-2 scale-105 shadow-xl" : "hover:scale-105 hover:shadow-lg"
+                    "cursor-pointer transition-all hover:shadow-md overflow-hidden group p-0 rounded",
+                    selectedSport === sport.type &&
+                      "ring-2 ring-primary shadow-md",
                   )}
                   onClick={() => setSelectedSport(sport.type)}
                 >
-                  <Image
-                    src={sportImages[sport.type]}
-                    alt={sport.label}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className={cn(
-                    "absolute inset-0 transition-colors duration-300 flex items-center justify-center",
-                    isSelected ? "bg-blue-600/60" : "bg-black/30 group-hover:bg-black/40"
-                  )}>
-                    <span className="text-white font-bold text-lg tracking-wide transform group-hover:scale-110 transition-transform">
-                      {sport.label}
-                    </span>
-                  </div>
-                </div>
+                  <CardContent className="p-0">
+                    <div className="relative h-36 overflow-hidden">
+                      <img
+                        src={sportImages[sport.type]}
+                        alt={sport.label}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <span className="absolute bottom-2 left-0 right-0 text-center text-sm font-semibold text-white">
+                        {sport.label}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
-        </section>
+        </div>
 
         {/* Sports Centers List */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">
-              Centri Disponibili
-            </h2>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded-full text-xs">
-              {sportsCenters.length} risultati
-            </Badge>
-          </div>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight mb-4">
+            Centri Sportivi
+          </h2>
 
           {/* Loading State */}
           {isLoading && (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Card key={i} className="border-0 shadow-sm rounded-3xl overflow-hidden">
-                  <CardContent className="p-0">
-                    <Skeleton className="h-48 w-full" />
-                    <div className="p-6 space-y-3">
-                      <Skeleton className="h-6 w-3/4 rounded-lg" />
-                      <Skeleton className="h-4 w-1/2 rounded-lg" />
-                      <Skeleton className="h-10 w-full rounded-xl mt-4" />
-                    </div>
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <Skeleton className="h-32 w-full mb-4" />
+                    <Skeleton className="h-4 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
                   </CardContent>
                 </Card>
               ))}
@@ -300,138 +270,154 @@ export default function UserHome({ user }: UserHomeProps) {
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-8 text-center max-w-lg mx-auto">
-              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-red-900 mb-2">Ops, qualcosa è andato storto</h3>
-              <p className="text-red-600 mb-6">{error}</p>
-              <Button
-                onClick={() => dispatch(fetchSportsCenters({}))}
-                variant="outline"
-                className="bg-white border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800 rounded-xl"
-              >
-                Riprova
-              </Button>
-            </div>
+            <Card className="border-destructive">
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <AlertCircle className="h-12 w-12 text-destructive mb-4" />
+                <p className="text-destructive mb-4">{error}</p>
+                <Button
+                  onClick={() => dispatch(fetchSportsCenters({}))}
+                  variant="outline"
+                >
+                  Riprova
+                </Button>
+              </CardContent>
+            </Card>
           )}
 
           {/* Empty State */}
           {!isLoading && !error && sportsCenters.length === 0 && (
-            <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center max-w-lg mx-auto shadow-sm">
-              <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Search className="h-8 w-8 text-blue-500" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
-                Nessun centro trovato
-              </h3>
-              <p className="text-slate-500 mb-6 max-w-xs mx-auto">
-                Non abbiamo trovato centri che corrispondano alla tua ricerca. Prova a cambiare filtri.
-              </p>
-              {searchQuery && (
-                <Button onClick={() => setSearchQuery("")} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
-                  Mostra tutto
-                </Button>
-              )}
-            </div>
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Search className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  Nessun centro trovato
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Prova a modificare i filtri di ricerca
+                </p>
+                {searchQuery && (
+                  <Button onClick={() => setSearchQuery("")} variant="outline">
+                    Cancella ricerca
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
           )}
 
           {/* Sports Centers Grid */}
           {!isLoading && !error && sportsCenters.length > 0 && (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {sportsCenters.map((center) => (
-                <div
+                <Card
                   key={center._id}
-                  className="group bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 cursor-pointer flex flex-col h-full"
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group p-0 rounded"
                   onClick={() => router.push(`/sports-centers/${center._id}`)}
                 >
-                  {/* Image Header */}
-                  <div className="relative h-56 overflow-hidden bg-slate-100">
-                    <Image
-                      src="https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&q=80"
-                      alt="Center cover"
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                  <CardContent className="p-0 flex flex-col h-full">
+                    {/* Image/Logo Section */}
+                    <div className="relative h-48 bg-muted">
+                      {/* Background Image */}
+                      <img
+                        src="https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop"
+                        alt="Sports center background"
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40" />
 
-                    <Badge
-                      className={cn(
-                        "absolute top-4 right-4 backdrop-blur-md px-3 py-1 text-xs font-medium border-0 shadow-sm",
-                        center.status === "active" ? "bg-green-500/90 text-white" : "bg-slate-500/90 text-white"
-                      )}
-                    >
-                      {center.status === "active" ? "Aperto" : "Non disponibile"}
-                    </Badge>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex flex-col flex-1 relative">
-                    {/* Logo Overlay */}
-                    <div className="absolute -top-10 left-6">
-                      <div className="h-20 w-20 rounded-2xl border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
-                        {center.logo_url ? (
-                          <img
-                            src={center.logo_url}
-                            alt={center.name}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <Building2 className="h-8 w-8 text-blue-300" />
+                      {/* Logo Centered Bottom */}
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+                        {center.logo_url && (
+                          <div className="h-20 w-20 rounded-full border-4 border-background bg-background overflow-hidden shadow-lg">
+                            <img
+                              src={center.logo_url}
+                              alt={center.name}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
                         )}
                       </div>
+
+                      {/* Status Badge */}
+                      <Badge
+                        className="absolute top-3 right-3"
+                        variant={
+                          center.status === "active"
+                            ? "default"
+                            : center.status === "maintenance"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
+                        {center.status === "active"
+                          ? "Attivo"
+                          : center.status === "maintenance"
+                            ? "Manutenzione"
+                            : "Inattivo"}
+                      </Badge>
                     </div>
 
-                    <div className="mt-10 mb-4">
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-1">
-                        {center.name || "Centro Sportivo"}
-                      </h3>
-                      {center.description && (
-                        <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed">
-                          {center.description}
-                        </p>
-                      )}
-                    </div>
+                    {/* Content Section - flex-grow ensures button stays at bottom */}
+                    <div className="p-6 pt-12 flex flex-col flex-grow">
+                      <div className="flex-grow">
+                        <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors text-center">
+                          {center.name || "Centro Sportivo"}
+                        </h3>
 
-                    {/* Info */}
-                    <div className="space-y-3 mb-6 mt-auto">
-                      {center.contact_info?.address && (
-                        <div className="flex items-start gap-3 text-sm text-slate-600">
-                          <div className="bg-blue-50 p-1.5 rounded-lg shrink-0 text-blue-600">
-                            <MapPin className="h-3.5 w-3.5" />
-                          </div>
-                          <span className="line-clamp-1 pt-0.5">{center.contact_info.address}</span>
-                        </div>
-                      )}
-                      {center.contact_info?.phone && (
-                        <div className="flex items-center gap-3 text-sm text-slate-600">
-                          <div className="bg-blue-50 p-1.5 rounded-lg shrink-0 text-blue-600">
-                            <Phone className="h-3.5 w-3.5" />
-                          </div>
-                          <span className="pt-0.5">{center.contact_info.phone}</span>
-                        </div>
-                      )}
-                      {center.contact_info?.website && (
-                        <div className="flex items-center gap-3 text-sm text-slate-600">
-                          <div className="bg-blue-50 p-1.5 rounded-lg shrink-0 text-blue-600">
-                            <Globe className="h-3.5 w-3.5" />
-                          </div>
-                          <span className="line-clamp-1 pt-0.5 text-blue-600 hover:underline">{center.contact_info.website}</span>
-                        </div>
-                      )}
-                    </div>
+                        {center.description && (
+                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2 text-center">
+                            {center.description}
+                          </p>
+                        )}
 
-                    <Button className="w-full rounded-xl bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 h-11 font-medium">
-                      Prenota ora
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                        {/* Contact Info */}
+                        {center.contact_info && (
+                          <div className="space-y-2 mb-4">
+                            {center.contact_info.address && (
+                              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                <span className="line-clamp-1">
+                                  {center.contact_info.address}
+                                </span>
+                              </div>
+                            )}
+                            {center.contact_info.phone && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Phone className="h-4 w-4 flex-shrink-0" />
+                                <span>{center.contact_info.phone}</span>
+                              </div>
+                            )}
+                            {center.contact_info.email && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Mail className="h-4 w-4 flex-shrink-0" />
+                                <span className="line-clamp-1">
+                                  {center.contact_info.email}
+                                </span>
+                              </div>
+                            )}
+                            {center.contact_info.website && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Globe className="h-4 w-4 flex-shrink-0" />
+                                <span className="line-clamp-1">
+                                  {center.contact_info.website}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* CTA Button - Always at the bottom */}
+                      <Button className="w-full mt-4 rounded" variant="default">
+                        Vedi Campi
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
-
-

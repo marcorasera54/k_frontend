@@ -96,16 +96,10 @@ export default function SportsCenterDetailPage() {
 
   if (!selectedSportsCenter) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50 flex items-center justify-center">
-        <Card className="border-destructive">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-            <p className="text-destructive mb-4">Centro sportivo non trovato</p>
-            <Button onClick={() => router.back()} variant="outline">
-              Torna indietro
-            </Button>
-          </CardContent>
-        </Card>
+      <div>
+        <Button onClick={() => router.back()} variant="outline">
+          Torna indietro
+        </Button>
       </div>
     );
   }
@@ -116,20 +110,10 @@ export default function SportsCenterDetailPage() {
         <div className="flex h-16 items-center justify-between px-6">
           {/* Logo and Name */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.back()}
-              className="mr-2"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <span className="text-xl font-bold">C</span>
             </div>
-            <span className="text-xl font-semibold">
-              {selectedSportsCenter.name}
-            </span>
+            <span className="text-xl font-semibold">Logo</span>
           </div>
 
           {/* User Profile Dropdown */}
