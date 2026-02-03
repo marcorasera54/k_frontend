@@ -88,3 +88,16 @@ export const resetPassword = createAsyncThunk<
     return rejectWithValue(message);
   }
 });
+
+export const logoutUser = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>("auth/logoutUser", async (_, { rejectWithValue }) => {
+  try {
+    await api.post("/auth/logout");
+  } catch (error: any) {
+    const message = error.response?.data?.detail || "Logout failed";
+    return rejectWithValue(message);
+  }
+});

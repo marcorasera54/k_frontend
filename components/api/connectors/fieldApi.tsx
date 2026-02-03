@@ -4,14 +4,15 @@ import { Field, FieldCreateRequest, FieldUpdateRequest, SportType } from "@/lib/
 
 export const fetchFields = createAsyncThunk<
   Field[],
-  { sport_type?: SportType; is_active?: boolean },
+  { sport_type?: SportType; is_active?: boolean; sports_center_id?: string },
   { rejectValue: string }
 >("fields/fetchFields", async (params, { rejectWithValue }) => {
   try {
     const queryParams = new URLSearchParams();
     if (params.sport_type) queryParams.append("sport_type", params.sport_type);
     if (params.is_active !== undefined) queryParams.append("is_active", String(params.is_active));
-    
+    if (params.sports_center_id) queryParams.append("sports_center_id", params.sports_center_id);
+
     const response = await api.get<Field[]>(`/fields?${queryParams.toString()}`);
     return response.data;
   } catch (error: any) {

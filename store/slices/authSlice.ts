@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AuthState, User } from "@/lib/types/auth";
 import api from "@/components/api/api";
-import { loginUser, signupUser, verifyEmail } from "@/components/api/connectors/authApi";
+import { loginUser, signupUser, verifyEmail, logoutUser } from "@/components/api/connectors/authApi";
 
 const initialState: AuthState = {
   user: null,
@@ -65,6 +65,8 @@ const authSlice = createSlice({
       .addCase(signupUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -99,6 +101,13 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.isLoading = false;
         state.error = null;
+      })
+
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.error = null;
+        state.isLoading = false;
       });
   },
 });
