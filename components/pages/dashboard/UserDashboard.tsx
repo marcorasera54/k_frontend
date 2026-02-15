@@ -12,14 +12,6 @@ import { User } from "@/lib/types/auth";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -38,8 +30,16 @@ import {
   User as UserIcon,
   LogOut,
   Settings,
+  CalendarIcon,
+  Calendar1Icon,
+  Clock,
+  Euro,
+  X,
+  Check,
 } from "lucide-react";
-import { getUserInitials } from "@/lib/utils";
+import { capitalize, cn, getUserInitials } from "@/lib/utils";
+import Image from "next/image";
+import { it } from "date-fns/locale";
 
 interface UserDashboardProps {
   user: User;
@@ -154,104 +154,199 @@ export default function UserDashboard({ user }: UserDashboardProps) {
         </div>
       </header>
       <div className="max-w-400 mx-auto p-6 lg:p-8 space-y-8">
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Ciao {user.first_name}!
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your bookings and explore available fields
-          </p>
-        </div>
-
         {/* My Bookings Section */}
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl">My Bookings</CardTitle>
-            <Button onClick={() => router.push("/fields")}>Book a Field</Button>
-          </CardHeader>
-          <CardContent>
-            {bookingsLoading ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="mt-4 text-muted-foreground">
-                  Loading bookings...
+        <div className="mb-8">
+          <div className="flex flex-row items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Le Mie Prenotazioni</h2>
+          </div>
+
+          {bookingsLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-4 text-muted-foreground">
+                Caricamento prenotazioni...
+              </p>
+            </div>
+          ) : bookings.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <Calendar className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  Nessuna Prenotazione
+                </h3>
+                <p className="text-muted-foreground text-center mb-4">
+                  Non hai ancora prenotato nessun campo. Inizia ora!
                 </p>
-              </div>
-            ) : bookings.length === 0 ? (
-              <div className="text-center py-12">
-                <Calendar className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">
-                  No bookings yet. Book your first field!
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Field</TableHead>
-                      <TableHead>Start Time</TableHead>
-                      <TableHead>End Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Total Price</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bookings.map((booking) => (
-                      <TableRow key={booking._id}>
-                        <TableCell className="font-medium">
-                          {getFieldName(booking.field_id)}
-                        </TableCell>
-                        <TableCell>
-                          {format(
-                            new Date(booking.start_time),
-                            "MMM dd, yyyy HH:mm",
+                <Button onClick={() => router.push("/fields")}>
+                  Prenota il Tuo Primo Campo
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {bookings.map((booking) => {
+                const startDate = new Date(booking.start_time);
+                const endDate = new Date(booking.end_time);
+                const isPast = endDate < new Date();
+                const isToday =
+                  format(startDate, "yyyy-MM-dd") ===
+                  format(new Date(), "yyyy-MM-dd");
+
+                return (
+                  <Card
+                    key={booking._id}
+                    className={cn(
+                      "overflow-hidden hover:shadow-lg transition-all cursor-pointer group p-0 rounded relative",
+                      isPast && "opacity-75",
+                    )}
+                  >
+                    <CardContent className="p-0 flex flex-col h-full">
+                      {/* Header Section with Image */}
+                      <div className="relative h-32 bg-gradient-to-br from-primary via-primary/90 to-primary/70">
+                        <Image
+                          src="https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop"
+                          alt="Field"
+                          width={400}
+                          height={128}
+                          className="w-full h-full object-cover opacity-50"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                        {/* Status Badge */}
+                        <Badge
+                          className="absolute top-3 right-3"
+                          variant={getStatusVariant(booking.status)}
+                        >
+                          {booking.status === BookingStatus.CONFIRMED &&
+                            "Confermata"}
+                          {booking.status === BookingStatus.PENDING &&
+                            "In Attesa"}
+                          {booking.status === BookingStatus.CANCELLED &&
+                            "Annullata"}
+                        </Badge>
+
+                        {/* Date Badge */}
+                        {isToday &&
+                          booking.status !== BookingStatus.CANCELLED && (
+                            <Badge className="absolute top-3 left-3 bg-green-500 hover:bg-green-600">
+                              Oggi
+                            </Badge>
                           )}
-                        </TableCell>
-                        <TableCell>
-                          {format(
-                            new Date(booking.end_time),
-                            "MMM dd, yyyy HH:mm",
+
+                        {/* Field Name */}
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <h3 className="text-lg font-bold text-white truncate">
+                            {getFieldName(booking.field_id)}
+                          </h3>
+                        </div>
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="p-5 flex flex-col flex-grow">
+                        {/* Date and Time Info Cards */}
+                        <div className="space-y-2 mb-4">
+                          {/* Date Card */}
+                          <div className="flex items-center gap-3 p-3 rounded bg-gray-50 border border-gray-200">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                              <Calendar1Icon className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-muted-foreground font-medium">
+                                Data
+                              </p>
+                              <p className="text-sm font-semibold text-gray-900 truncate">
+                                {capitalize(
+                                  format(startDate, "EEEE, d MMMM yyyy", {
+                                    locale: it,
+                                  }),
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Time Card */}
+                          <div className="flex items-center gap-3 p-3 rounded bg-gray-50 border border-gray-200">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                              <Clock className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs text-muted-foreground font-medium">
+                                Orario
+                              </p>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {format(startDate, "HH:mm")} -{" "}
+                                {format(endDate, "HH:mm")}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price Section */}
+                        <div className="flex items-center gap-3 p-3 rounded bg-gray-50 border border-gray-200 mb-4">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                            <DollarSign className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs text-muted-foreground font-medium">
+                              Totale
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900">
+                              €{booking.total_price.toFixed(2)}
+                            </p>
+                          </div>{" "}
+                        </div>
+
+                        {/* Action Button */}
+                        <div className="mt-auto">
+                          {booking.status === BookingStatus.CONFIRMED &&
+                            !isPast && (
+                              <Button
+                                variant="outline"
+                                className="h-8 w-full text-destructive hover:text-destructive hover:bg-destructive/10 hover:border-destructive/30 rounded group/btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCancelBooking(booking._id);
+                                }}
+                                disabled={cancelling === booking._id}
+                              >
+                                {cancelling === booking._id ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Annullamento...
+                                  </>
+                                ) : (
+                                  <>Annulla Prenotazione</>
+                                )}
+                              </Button>
+                            )}
+
+                          {booking.status === BookingStatus.CANCELLED && (
+                            <div className="items-center text-center px-3 py-1 rounded bg-gray-50 border border-gray-200">
+                              <p className="text-sm text-muted-foreground">
+                                Prenotazione annullata
+                              </p>
+                            </div>
                           )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getStatusVariant(booking.status)}>
-                            {booking.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          ${booking.total_price.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {booking.status !== BookingStatus.CANCELLED && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCancelBooking(booking._id)}
-                              disabled={cancelling === booking._id}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              {cancelling === booking._id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Cancelling...
-                                </>
-                              ) : (
-                                "Cancel"
-                              )}
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
+                          {isPast &&
+                            booking.status === BookingStatus.CONFIRMED && (
+                              <div className="items-center text-center px-3 py-1 rounded bg-green-50 border border-green-200">
+                                <p className="text-sm text-green-700 font-medium">
+                                  Completata
+                                </p>
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

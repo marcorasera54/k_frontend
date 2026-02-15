@@ -12,7 +12,8 @@ export const loginUser = createAsyncThunk<
 
     return response.data;
   } catch (error: any) {
-    const message = error.response?.data?.detail || "Login failed";
+    console.log("Error: ", error);
+    const message = error.response?.data?.detail || error;
     return rejectWithValue(message);
   }
 });
@@ -89,15 +90,14 @@ export const resetPassword = createAsyncThunk<
   }
 });
 
-export const logoutUser = createAsyncThunk<
-  void,
-  void,
-  { rejectValue: string }
->("auth/logoutUser", async (_, { rejectWithValue }) => {
-  try {
-    await api.post("/auth/logout");
-  } catch (error: any) {
-    const message = error.response?.data?.detail || "Logout failed";
-    return rejectWithValue(message);
-  }
-});
+export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error: any) {
+      const message = error.response?.data?.detail || "Logout failed";
+      return rejectWithValue(message);
+    }
+  },
+);
