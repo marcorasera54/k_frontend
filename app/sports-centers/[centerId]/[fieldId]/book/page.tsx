@@ -249,7 +249,7 @@ export default function BookingPage() {
           <Alert className="mb-6 bg-emerald-50 border-emerald-200 animate-in slide-in-from-top">
             <Check className="h-4 w-4 text-emerald-600" />
             <AlertDescription className="text-emerald-800 font-medium">
-              🎉 Prenotazione confermata con successo!
+              Prenotazione confermata con successo!
             </AlertDescription>
           </Alert>
         )}
