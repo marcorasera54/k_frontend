@@ -16,7 +16,7 @@ import { User } from "@/lib/types/auth";
 import { useRouter } from "next/navigation";
 
 interface AppHeaderProps {
-  user: User;
+  user: User | null;
 }
 
 export default function AppHeader({ user }: AppHeaderProps) {
@@ -44,7 +44,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
               className="flex items-center justify-end gap-3 px-3 min-w-40 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:bg-transparent"
             >
               <span className="hidden md:block text-sm font-medium">
-                {user.first_name} {user.last_name}
+                {user?.first_name} {user?.last_name}
               </span>
               <Avatar className="h-9 w-9">
                 <AvatarFallback className="bg-primary text-primary-foreground">
@@ -57,10 +57,10 @@ export default function AppHeader({ user }: AppHeaderProps) {
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user.first_name} {user.last_name}
+                  {user?.first_name} {user?.last_name}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user.email}
+                  {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
