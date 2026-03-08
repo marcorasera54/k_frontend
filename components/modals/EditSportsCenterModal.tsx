@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { createSportsCenter } from "@/components/api/connectors/sportsCenterApi";
+import { updateSportsCenter } from "@/components/api/connectors/sportsCenterApi";
 import {
+  SportsCenter,
   SportsCenterStatus,
   SportsCenterStatusLabel,
 } from "@/lib/types/sports_center";
@@ -28,35 +29,57 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle, ImageIcon, X, Upload } from "lucide-react";
 import { uploadImage } from "../api/connectors/uploadApi";
 
-interface CreateSportsCenterModalProps {
+interface EditSportsCenterModalProps {
   isOpen: boolean;
   onClose: () => void;
+  sportsCenter: SportsCenter;
 }
 
-export default function CreateSportsCenterModal({
+export default function EditSportsCenterModal({
   isOpen,
   onClose,
-}: CreateSportsCenterModalProps) {
+  sportsCenter,
+}: EditSportsCenterModalProps) {
   const dispatch = useAppDispatch();
+
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     logo_url: "",
     status: SportsCenterStatus.ACTIVE,
-    contact_info: {
-      phone: "",
-      email: "",
-      website: "",
-      address: "",
-    },
+    contact_info: { phone: "", email: "", website: "", address: "" },
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // Pre-fill form when modal opens
+  useEffect(() => {
+    if (sportsCenter) {
+      setFormData({
+        name: sportsCenter.name || "",
+        description: sportsCenter.description || "",
+        logo_url: sportsCenter.logo_url || "",
+        status: sportsCenter.status || SportsCenterStatus.ACTIVE,
+        contact_info: {
+          phone: sportsCenter.contact_info?.phone || "",
+          email: sportsCenter.contact_info?.email || "",
+          website: sportsCenter.contact_info?.website || "",
+          address: sportsCenter.contact_info?.address || "",
+        },
+      });
+      setLogoPreview(sportsCenter.logo_url || null);
+      setExistingImages(sportsCenter.images || []);
+      setImageFiles([]);
+      setImagePreviews([]);
+    }
+  }, [sportsCenter]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,13 +95,11 @@ export default function CreateSportsCenterModal({
         logo_url = uploaded.url;
       }
 
-      // ← upload all gallery images
-      const uploadedImageUrls: string[] = [];
+      const newImageUrls: string[] = [];
       for (const file of imageFiles) {
         const uploaded = await uploadImage(file, "/sports-centers/gallery");
-        uploadedImageUrls.push(uploaded.url);
+        newImageUrls.push(uploaded.url);
       }
-
       setIsUploading(false);
 
       const contactInfo = Object.fromEntries(
@@ -86,33 +107,24 @@ export default function CreateSportsCenterModal({
       );
 
       await dispatch(
-        createSportsCenter({
-          name: formData.name,
-          description: formData.description || undefined,
-          logo_url,
-          images: uploadedImageUrls, // ← pass them here
-          status: formData.status,
-          contact_info:
-            Object.keys(contactInfo).length > 0 ? contactInfo : undefined,
+        updateSportsCenter({
+          centerId: sportsCenter._id,
+          centerData: {
+            name: formData.name,
+            description: formData.description || undefined,
+            logo_url,
+            images: [...existingImages, ...newImageUrls],
+            status: formData.status,
+            contact_info:
+              Object.keys(contactInfo).length > 0 ? contactInfo : undefined,
+          },
         }),
       ).unwrap();
 
-      alert("Centro sportivo creato con successo!");
       onClose();
-      setFormData({
-        name: "",
-        description: "",
-        logo_url: "",
-        status: SportsCenterStatus.ACTIVE,
-        contact_info: { phone: "", email: "", website: "", address: "" },
-      });
-      setLogoFile(null);
-      setLogoPreview(null);
-      setImageFiles([]);
-      setImagePreviews([]);
     } catch (err: any) {
       setIsUploading(false);
-      setError(err || "Impossibile creare il centro sportivo");
+      setError(err || "Impossibile aggiornare il centro sportivo");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +135,7 @@ export default function CreateSportsCenterModal({
     if (!file) return;
     setLogoFile(file);
     setLogoPreview(URL.createObjectURL(file));
-    setFormData({ ...formData, logo_url: "" }); // clear old url
+    setFormData({ ...formData, logo_url: "" });
   };
 
   const handleRemoveLogo = () => {
@@ -135,28 +147,35 @@ export default function CreateSportsCenterModal({
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
-
-    const combined = [...imageFiles, ...files].slice(0, 6); // max 6
+    const total = existingImages.length + imageFiles.length;
+    const combined = [...imageFiles, ...files].slice(
+      0,
+      Math.max(0, 6 - existingImages.length),
+    );
     setImageFiles(combined);
     setImagePreviews(combined.map((f) => URL.createObjectURL(f)));
   };
 
-  const handleRemoveImage = (index: number) => {
-    const updatedFiles = imageFiles.filter((_, i) => i !== index);
-    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
-    setImageFiles(updatedFiles);
-    setImagePreviews(updatedPreviews);
+  const handleRemoveNewImage = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const handleRemoveExistingImage = (index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const totalImages = existingImages.length + imagePreviews.length;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            Crea Nuovo Centro Sportivo
+            Modifica Centro Sportivo
           </DialogTitle>
           <DialogDescription>
-            Aggiungi un nuovo centro sportivo alla tua organizzazione
+            Aggiorna le informazioni del centro sportivo
           </DialogDescription>
         </DialogHeader>
 
@@ -168,7 +187,6 @@ export default function CreateSportsCenterModal({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">
@@ -183,7 +201,7 @@ export default function CreateSportsCenterModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Complesso Sportivo Centro"
-                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                className="rounded h-10 px-4 border-gray-300 bg-white"
               />
             </div>
 
@@ -197,13 +215,13 @@ export default function CreateSportsCenterModal({
                 }
                 rows={3}
                 placeholder="Breve descrizione del tuo centro sportivo..."
-                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                className="rounded px-4 border-gray-300 bg-white resize-none"
               />
             </div>
 
+            {/* Logo */}
             <div className="space-y-2">
               <Label>Logo</Label>
-
               {logoPreview ? (
                 <div className="relative w-32 h-32 rounded-lg border border-gray-200 overflow-hidden group">
                   <img
@@ -239,6 +257,7 @@ export default function CreateSportsCenterModal({
               )}
             </div>
 
+            {/* Images */}
             <div className="space-y-2">
               <Label>
                 Immagini Centro{" "}
@@ -246,11 +265,11 @@ export default function CreateSportsCenterModal({
                   (max 6)
                 </span>
               </Label>
-
               <div className="flex flex-wrap gap-2">
-                {imagePreviews.map((src, i) => (
+                {/* Existing images */}
+                {existingImages.map((src, i) => (
                   <div
-                    key={i}
+                    key={`existing-${i}`}
                     className="relative w-24 h-24 rounded-lg border border-gray-200 overflow-hidden group"
                   >
                     <img
@@ -260,15 +279,34 @@ export default function CreateSportsCenterModal({
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveImage(i)}
+                      onClick={() => handleRemoveExistingImage(i)}
                       className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}
-
-                {imagePreviews.length < 6 && (
+                {/* New images */}
+                {imagePreviews.map((src, i) => (
+                  <div
+                    key={`new-${i}`}
+                    className="relative w-24 h-24 rounded-lg border border-blue-200 overflow-hidden group"
+                  >
+                    <img
+                      src={src}
+                      alt={`new-${i}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveNewImage(i)}
+                      className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {totalImages < 6 && (
                   <label
                     htmlFor="images_upload"
                     className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
@@ -319,89 +357,47 @@ export default function CreateSportsCenterModal({
             </div>
           </div>
 
-          {/* Contact Information */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">Telefono</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.contact_info.phone}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      contact_info: {
-                        ...formData.contact_info,
-                        phone: e.target.value,
-                      },
-                    })
-                  }
-                  placeholder="+39 123 456 7890"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.contact_info.email}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      contact_info: {
-                        ...formData.contact_info,
-                        email: e.target.value,
-                      },
-                    })
-                  }
-                  placeholder="contatto@esempio.com"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="website">Sito Web</Label>
-                <Input
-                  id="website"
-                  type="url"
-                  value={formData.contact_info.website}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      contact_info: {
-                        ...formData.contact_info,
-                        website: e.target.value,
-                      },
-                    })
-                  }
-                  placeholder="https://esempio.com"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Indirizzo</Label>
-                <Input
-                  id="address"
-                  type="text"
-                  value={formData.contact_info.address}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      contact_info: {
-                        ...formData.contact_info,
-                        address: e.target.value,
-                      },
-                    })
-                  }
-                  placeholder="Via Roma 123, Città, Provincia"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
-                />
-              </div>
-            </div>
+          {/* Contact Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(["phone", "email", "website", "address"] as const).map(
+              (field) => (
+                <div key={field} className="space-y-2">
+                  <Label htmlFor={field}>
+                    {
+                      {
+                        phone: "Telefono",
+                        email: "Email",
+                        website: "Sito Web",
+                        address: "Indirizzo",
+                      }[field]
+                    }
+                  </Label>
+                  <Input
+                    id={field}
+                    type={
+                      field === "email"
+                        ? "email"
+                        : field === "website"
+                          ? "url"
+                          : field === "phone"
+                            ? "tel"
+                            : "text"
+                    }
+                    value={formData.contact_info[field]}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        contact_info: {
+                          ...formData.contact_info,
+                          [field]: e.target.value,
+                        },
+                      })
+                    }
+                    className="rounded h-10 px-4 border-gray-300 bg-white"
+                  />
+                </div>
+              ),
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -424,8 +420,8 @@ export default function CreateSportsCenterModal({
               {isUploading
                 ? "Caricamento..."
                 : isSubmitting
-                  ? "Creazione..."
-                  : "Crea"}
+                  ? "Salvataggio..."
+                  : "Salva Modifiche"}
             </Button>
           </div>
         </form>

@@ -22,6 +22,7 @@ export interface SportsCenter {
   name: string;
   description?: string;
   logo_url?: string;
+  images?: string[]; 
   contact_info?: ContactInfo;
   status: SportsCenterStatus;
   manager_id: string;
@@ -33,6 +34,7 @@ export interface SportsCenterCreateRequest {
   name: string;
   description?: string;
   logo_url?: string;
+  images?: string[]; 
   contact_info?: ContactInfo;
   status: SportsCenterStatus;
 }
@@ -41,6 +43,7 @@ export interface SportsCenterUpdateRequest {
   name?: string;
   description?: string;
   logo_url?: string;
+  images?: string[]; 
   contact_info?: ContactInfo;
   status?: SportsCenterStatus;
 }

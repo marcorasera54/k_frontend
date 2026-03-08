@@ -34,6 +34,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getUserInitials } from "@/lib/utils";
 import Image from "next/image";
+import ImageCarousel from "@/components/ui/image-carousel";
+import AppHeader from "@/components/layout/AppHeader";
 
 export default function SportsCenterDetailPage() {
   const { user } = useAppSelector((state) => state.auth);
@@ -104,81 +106,20 @@ export default function SportsCenterDetailPage() {
     );
   }
 
+  console.log("selectedSportsCenter: ", selectedSportsCenter);
+
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-6">
-          {/* Logo and Name */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-xl font-bold">C</span>
-            </div>
-            <span className="text-xl font-semibold">Logo</span>
-          </div>
-
-          {/* User Profile Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="flex items-center justify-end gap-3 px-3 min-w-40 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:bg-transparent"
-              >
-                <span className="hidden md:block text-sm font-medium">
-                  {user?.first_name} {user?.last_name}
-                </span>
-                <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {getUserInitials(user)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded shadow-sm">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user?.first_name} {user?.last_name}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user?.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => router.push("/profile")}
-              >
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => router.push("/my-bookings")}
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                <span>Le Mie Prenotazioni</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push("/logout")}
-                className="text-red-500 hover:bg-gray-50 cursor-pointer"
-              >
-                <LogOut className="mr-2 h-4 w-4 text-red-500" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+      <AppHeader user={user} />
       {/* Main Content */}
       <div className="max-w-7xl mx-auto p-6 lg:p-8 space-y-8">
         {/* Sports Center Details */}
         <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer overflow-hidden p-0">
           <div className="relative h-64 bg-gradient-to-r from-primary/20 to-primary/10">
-            <img
-              src="https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop"
-              alt="Sports center background"
-              className="h-full w-full object-cover"
+            <ImageCarousel
+              images={selectedSportsCenter.images}
+              alt={selectedSportsCenter.name}
+              className="h-full w-full"
             />
             <div className="absolute inset-0 bg-black/40" />
 
@@ -329,7 +270,10 @@ export default function SportsCenterDetailPage() {
                 >
                   <div className="relative h-40 overflow-hidden bg-muted">
                     <Image
-                      src="https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      src={
+                        field.image_url ??
+                        "https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      }
                       alt={`${field.name}`}
                       width={400}
                       height={160}

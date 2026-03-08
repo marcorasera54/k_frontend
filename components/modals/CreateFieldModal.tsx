@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, ImageIcon, X } from "lucide-react";
+import { uploadImage } from "../api/connectors/uploadApi";
 
 interface CreateFieldModalProps {
   isOpen: boolean;
@@ -47,6 +48,9 @@ export default function CreateFieldModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { sportsCenters } = useAppSelector((state) => state.sportsCenters);
 
   useEffect(() => {
@@ -59,10 +63,23 @@ export default function CreateFieldModal({
     setIsSubmitting(true);
 
     try {
+      let image_url: string | undefined;
+      let image_file_id: string | undefined;
+
+      if (imageFile) {
+        setIsUploading(true);
+        const uploaded = await uploadImage(imageFile, "/fields");
+        image_url = uploaded.url;
+        image_file_id = uploaded.file_id;
+        setIsUploading(false);
+      }
+
       await dispatch(
         createField({
           ...formData,
           hourly_rate: parseFloat(formData.hourly_rate),
+          image_url,
+          image_file_id,
         }),
       ).unwrap();
 
@@ -75,7 +92,10 @@ export default function CreateFieldModal({
         description: "",
         is_active: true,
       });
+      setImageFile(null);
+      setImagePreview(null);
     } catch (err: any) {
+      setIsUploading(false);
       setError(err || "Impossibile creare il campo");
     } finally {
       setIsSubmitting(false);
@@ -87,6 +107,18 @@ export default function CreateFieldModal({
       onClose();
       setError(null);
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   return (
@@ -163,6 +195,47 @@ export default function CreateFieldModal({
               placeholder="Campo Calcio Principale"
               className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Immagine Campo</Label>
+
+            {imagePreview ? (
+              <div className="relative w-full h-40 rounded-lg border border-gray-200 overflow-hidden group">
+                <img
+                  src={imagePreview}
+                  alt="Field preview"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ) : (
+              <label
+                htmlFor="field_image_upload"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+              >
+                <ImageIcon className="h-8 w-8 text-gray-400 mb-2" />
+                <span className="text-sm text-gray-500">
+                  Carica immagine del campo
+                </span>
+                <span className="text-xs text-gray-400 mt-1">
+                  JPG, PNG, WEBP
+                </span>
+                <input
+                  id="field_image_upload"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -255,13 +328,15 @@ export default function CreateFieldModal({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || sportsCenters.length === 0}
+              disabled={
+                isSubmitting || isUploading || sportsCenters.length === 0
+              }
               className="rounded flex-1 bg-slate-900 hover:bg-slate-800"
             >
-              {isSubmitting ? (
+              {isSubmitting || isUploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creazione in corso...
+                  {isUploading ? "Caricamento..." : "Creazione in corso..."}
                 </>
               ) : (
                 "Crea Campo"

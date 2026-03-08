@@ -59,6 +59,7 @@ import { clearProfileMessages } from "@/store/slices/profileSlice";
 import { clearAuth } from "@/store/slices/authSlice";
 import { logoutUser } from "@/components/api/connectors/authApi";
 import { cn } from "@/lib/utils";
+import AppHeader from "@/components/layout/AppHeader";
 
 function FeedbackBanner({
   type,
@@ -105,7 +106,7 @@ function ProfileSection({
 }) {
   return (
     <Card className="rounded">
-      <CardHeader className="pb-4">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           {icon}
           {title}
@@ -256,67 +257,7 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div
-            onClick={() => router.push("/")}
-            className="flex items-center gap-3"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-xl font-bold">C</span>
-            </div>
-            <span className="text-xl font-semibold hidden sm:block">
-              Profile
-            </span>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="flex items-center justify-end gap-3 px-3 min-w-40 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:bg-transparent"
-              >
-                <span className="hidden md:block text-sm font-medium">
-                  {displayUser?.first_name} {displayUser?.last_name}
-                </span>
-                <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {displayUser ? getUserInitials(displayUser as any) : "?"}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded shadow-sm">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {displayUser?.first_name} {displayUser?.last_name}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {displayUser?.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => router.push("/profile")}
-              >
-                <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="text-red-500 hover:bg-gray-50 cursor-pointer"
-              >
-                <LogOut className="mr-2 h-4 w-4 text-red-500" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+      <AppHeader user={user} />
 
       <div className="max-w-3xl mx-auto p-6 lg:p-8 space-y-8">
         <div className="flex items-end gap-4">
@@ -337,12 +278,7 @@ export default function ProfilePage() {
               {profile?.is_verified && (
                 <Badge variant="secondary" className="gap-1 text-xs rounded">
                   <BadgeCheck className="h-3 w-3" />
-                  Verified
-                </Badge>
-              )}
-              {profile?.role && (
-                <Badge variant="outline" className="text-xs rounded capitalize">
-                  {profile.role}
+                  Verificato
                 </Badge>
               )}
             </div>
@@ -350,28 +286,28 @@ export default function ProfilePage() {
         </div>
 
         <ProfileSection
-          title="Personal Information"
+          title="Informazioni Personali"
           icon={<UserIcon className="h-5 w-5 text-primary" />}
         >
           <form onSubmit={handleSaveInfo} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="first_name">First Name</Label>
+                <Label htmlFor="first_name">Nome</Label>
                 <Input
                   id="first_name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
+                  placeholder="John"
                   className="rounded"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="last_name">Last Name</Label>
+                <Label htmlFor="last_name">Cognome</Label>
                 <Input
                   id="last_name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name"
+                  placeholder="Doe"
                   className="rounded"
                 />
               </div>
@@ -389,12 +325,12 @@ export default function ProfilePage() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Email cannot be changed.
+                L'email non può essere cambiata.
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Telefono</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -403,21 +339,6 @@ export default function ProfilePage() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+39 000 000 0000"
                   className="pl-9 rounded"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="bio">Bio</Label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Textarea
-                  id="bio"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell us a bit about yourself..."
-                  rows={3}
-                  className="pl-9 rounded resize-none"
                 />
               </div>
             </div>
@@ -437,7 +358,7 @@ export default function ProfilePage() {
                 disabled={infoSaving}
               >
                 <Save className="h-4 w-4" />
-                {infoSaving ? "Saving..." : "Save Changes"}
+                {infoSaving ? "Salvataggio..." : "Salva"}
               </Button>
             </div>
           </form>
@@ -445,19 +366,19 @@ export default function ProfilePage() {
 
         {!profile?.oauth_provider && (
           <ProfileSection
-            title="Security"
+            title="Sicurezza"
             icon={<KeyRound className="h-5 w-5 text-primary" />}
           >
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="current_password">Current Password</Label>
+                <Label htmlFor="current_password">Vecchia password</Label>
                 <div className="relative">
                   <Input
                     id="current_password"
                     type={showCurrent ? "text" : "password"}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter current password"
+                    placeholder="Inserisci vecchia password"
                     className="pr-10 rounded"
                     required
                   />
@@ -476,14 +397,14 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="new_password">New Password</Label>
+                <Label htmlFor="new_password">Nuova Password</Label>
                 <div className="relative">
                   <Input
                     id="new_password"
                     type={showNew ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="At least 8 characters"
+                    placeholder="Minimo 8 caratteri"
                     className="pr-10 rounded"
                     required
                     minLength={8}
@@ -503,14 +424,16 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="confirm_password">Confirm New Password</Label>
+                <Label htmlFor="confirm_password">
+                  Conferma nuova password
+                </Label>
                 <div className="relative">
                   <Input
                     id="confirm_password"
                     type={showConfirm ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repeat new password"
+                    placeholder="Reinserisci nuova password"
                     className="pr-10 rounded"
                     required
                   />
@@ -543,8 +466,8 @@ export default function ProfilePage() {
                   className="rounded gap-2"
                   disabled={pwSaving}
                 >
-                  <Shield className="h-4 w-4" />
-                  {pwSaving ? "Updating..." : "Update Password"}
+                  <KeyRound className="h-4 w-4" />
+                  {pwSaving ? "Aggiornamento..." : "Aggiorna"}
                 </Button>
               </div>
             </form>
@@ -566,8 +489,8 @@ export default function ProfilePage() {
           </Card>
         )}
 
-        <Card className="rounded border-destructive/30">
-          <CardHeader className="pb-3">
+        <Card className="rounded border-destructive/30 bg-destructive/5">
+          <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg text-destructive">
               <Trash2 className="h-5 w-5" />
               Danger Zone
@@ -575,11 +498,11 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all associated data. This
-              action cannot be undone.
+              Elimina definitivamente il tuo account e tutti i dati associati.
+              Questa azione non può essere annullata.
             </p>
 
-            <Separator />
+            <Separator className="bg-red-200" />
 
             {deleteFeedback && (
               <FeedbackBanner
@@ -593,17 +516,18 @@ export default function ProfilePage() {
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" className="rounded gap-2">
                   <Trash2 className="h-4 w-4" />
-                  Delete Account
+                  Elimina account
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogTitle>Sei assolutamente sicuro?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete your account, all bookings, and
-                    any data associated with it. This action{" "}
+                    Questo eliminerà definitivamente il tuo account, tutte le
+                    prenotazioni e qualsiasi dato associato ad esso. Questa
+                    azione{" "}
                     <span className="font-semibold text-destructive">
-                      cannot be undone
+                      non può essere annullata
                     </span>
                     .
                   </AlertDialogDescription>
@@ -612,7 +536,7 @@ export default function ProfilePage() {
                 {!profile?.oauth_provider && (
                   <div className="space-y-1.5 py-2">
                     <Label htmlFor="delete_password">
-                      Confirm your password
+                      Conferma la password
                     </Label>
                     <div className="relative">
                       <Input
@@ -620,7 +544,7 @@ export default function ProfilePage() {
                         type={showDeletePw ? "text" : "password"}
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}
-                        placeholder="Enter your password to confirm"
+                        placeholder="Inserisci la password per confermare"
                         className="pr-10 rounded"
                       />
                       <button
@@ -646,7 +570,7 @@ export default function ProfilePage() {
                       setDeleteFeedback(null);
                     }}
                   >
-                    Cancel
+                    Torna indietro
                   </AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded"
@@ -655,7 +579,7 @@ export default function ProfilePage() {
                       deleting || (!profile?.oauth_provider && !deletePassword)
                     }
                   >
-                    {deleting ? "Deleting..." : "Delete my account"}
+                    {deleting ? "Eliminazione..." : "Elimina account"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

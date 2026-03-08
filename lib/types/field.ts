@@ -12,6 +12,8 @@ export interface Field {
   name: string;
   sport_type: SportType;
   hourly_rate: number;
+  image_url?: string;
+  image_file_id?: string;
   description?: string;
   is_active: boolean;
   created_by: string;
@@ -23,6 +25,8 @@ export interface Field {
 export interface FieldCreateRequest {
   sports_center_id: string;
   name: string;
+  image_url?: string;
+  image_file_id?: string;
   sport_type: SportType;
   hourly_rate: number;
   description?: string;
@@ -33,6 +37,8 @@ export interface FieldUpdateRequest {
   sports_center_id?: string;
   name?: string;
   sport_type?: SportType;
+  image_url?: string;
+  image_file_id?: string;
   hourly_rate?: number;
   description?: string;
   is_active?: boolean;
