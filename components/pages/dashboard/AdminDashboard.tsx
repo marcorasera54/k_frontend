@@ -26,17 +26,18 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import UsersManagement from "./admin/usersManagement";
 import { getAllManagerRequests } from "@/components/api/connectors/managerRequestApi";
 import AppHeader from "@/components/layout/AppHeader";
+import { UserRole } from "@/lib/types/auth";
 
 interface User {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
-  role: string;
+  is_verified: boolean;
+  role: UserRole;
 }
 
 export default function AdminDashboard({ user }: { user: User }) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState("users");
 
