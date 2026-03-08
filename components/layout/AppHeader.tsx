@@ -41,11 +41,12 @@ export default function AppHeader({ user }: AppHeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center justify-end gap-3 px-3 min-w-40 focus:outline-none focus:ring-0 focus-visible:ring-0 focus:bg-transparent"
+              className="flex items-center justify-end gap-3 px-2 md:px-3 md:min-w-40 hover:bg-transparent focus:outline-none focus:ring-0 focus-visible:ring-0"
             >
               <span className="hidden md:block text-sm font-medium">
                 {user?.first_name} {user?.last_name}
               </span>
+
               <Avatar className="h-9 w-9">
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {getUserInitials(user)}
