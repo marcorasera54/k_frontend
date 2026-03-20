@@ -53,7 +53,7 @@ export default function CtaSection() {
                 <Button
                   size="lg"
                   onClick={() => router.push("/signup")}
-                  className="rounded-md px-8 gap-2 text-base"
+                  className="rounded px-8 gap-2 text-base"
                 >
                   Crea il tuo account
                 </Button>
@@ -61,7 +61,7 @@ export default function CtaSection() {
                   size="lg"
                   variant="outline"
                   onClick={() => router.push("/login")}
-                  className="rounded-md px-8 text-base bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white"
+                  className="rounded px-8 text-base bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white"
                 >
                   Accedi
                 </Button>

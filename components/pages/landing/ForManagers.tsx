@@ -105,14 +105,14 @@ export default function ForManagersSection() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2 pb-2">
             <Button
               onClick={() => router.push("/signup")}
-              className="rounded-md gap-2"
+              className="rounded gap-2"
             >
               Registra il tuo centro
             </Button>
             <Button
               variant="outline"
               onClick={() => router.push("/login")}
-              className="rounded-md"
+              className="rounded"
             >
               Accedi alla dashboard
             </Button>

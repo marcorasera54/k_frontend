@@ -11,7 +11,7 @@
 
 ## UI / UX Improvements
 
-- [ ] Improve modal components (design, accessibility, responsiveness)
+- [ ] Improve modal components (design, accessibility, responsiveness, logo)
 
 ## Bug Fixing
 

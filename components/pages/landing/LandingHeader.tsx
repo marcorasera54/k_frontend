@@ -25,13 +25,13 @@ export default function LandingHeader() {
           <Button
             variant="ghost"
             onClick={() => router.push("/fields")}
-            className="rounded-md border text-sm hidden sm:flex"
+            className="rounded border text-sm hidden sm:flex"
           >
             Accedi
           </Button>
           <Button
             onClick={() => router.push("/signup")}
-            className="rounded-md text-sm"
+            className="rounded text-sm"
           >
             Registrati
           </Button>
