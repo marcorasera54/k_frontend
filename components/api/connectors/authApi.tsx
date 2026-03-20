@@ -101,3 +101,35 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
     }
   },
 );
+
+export const initiateGoogleLogin = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>("auth/initiateGoogleLogin", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<{ url: string }>("/auth/google/url");
+    window.location.href = response.data.url;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.detail || "Failed to get Google login URL",
+    );
+  }
+});
+
+export const googleCallback = createAsyncThunk<
+  LoginResponse,
+  string,
+  { rejectValue: string }
+>("auth/googleCallback", async (code, { rejectWithValue }) => {
+  try {
+    const response = await api.post<LoginResponse>("/auth/google/callback", {
+      code,
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.detail || "Google login failed",
+    );
+  }
+});

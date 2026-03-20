@@ -38,6 +38,7 @@ import {
   Loader2,
   CheckCheckIcon,
   CheckIcon,
+  EuroIcon,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -64,6 +65,7 @@ import { getUserInitials } from "@/lib/utils";
 import AppHeader from "@/components/layout/AppHeader";
 import { SportsCenter } from "@/lib/types/sports_center";
 import EditSportsCenterModal from "@/components/modals/EditSportsCenterModal";
+import ManagerBookingsTab from "./manager/ManagerBookings";
 
 interface FieldManagerDashboardProps {
   user: User;
@@ -157,7 +159,7 @@ export default function FieldManagerDashboard({
     {
       title: "Ricavi Totali",
       value: `€${totalRevenue.toFixed(2)}`,
-      icon: DollarSign,
+      icon: EuroIcon,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
     },
@@ -177,7 +179,6 @@ export default function FieldManagerDashboard({
             campi e prenotazioni.
           </p>
         </div>
-
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {statsData.map((stat, index) => {
@@ -206,21 +207,22 @@ export default function FieldManagerDashboard({
             );
           })}
         </div>
-
         {/* Main Content */}
         <div className="space-y-6">
-          <div className="flex justify-between">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
               Centri Sportivi
             </h1>
             <Button
               onClick={() => setIsCreateCenterModalOpen(true)}
-              className="rounded bg-slate-900 hover:bg-slate-800"
+              className="rounded bg-slate-900 hover:bg-slate-800 w-full sm:w-auto"
             >
               <Plus className="w-4 h-4" />
               Aggiungi Centro
             </Button>
           </div>
+
           {centersLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
               <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -230,7 +232,7 @@ export default function FieldManagerDashboard({
             </div>
           ) : sportsCenters.length === 0 ? (
             <Card className="border shadow-sm">
-              <CardContent className="p-16">
+              <CardContent className="p-8 sm:p-16">
                 <div className="flex flex-col items-center justify-center text-center">
                   <div className="bg-slate-100 p-4 rounded-full mb-4">
                     <Building2 className="w-8 h-8 text-slate-400" />
@@ -243,7 +245,7 @@ export default function FieldManagerDashboard({
                   </p>
                   <Button
                     onClick={() => setIsCreateCenterModalOpen(true)}
-                    className="mt-4 bg-slate-900 hover:bg-slate-800"
+                    className="mt-4 bg-slate-900 hover:bg-slate-800 w-full sm:w-auto"
                   >
                     <Plus className="w-4 h-4" />
                     Aggiungi Centro Sportivo
@@ -255,38 +257,36 @@ export default function FieldManagerDashboard({
             sportsCenters.map((center) => (
               <Card
                 key={center._id}
-                className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer overflow-hidden"
+                className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 overflow-hidden"
               >
                 {/* Center Header */}
-                <CardHeader className="border-b bg-slate-50/50">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                    <div className="flex items-start gap-4">
+                <CardHeader className="border-b bg-slate-50/50 px-4 sm:px-6 py-4">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                       {center.logo_url && (
                         <Image
                           src={center.logo_url}
                           alt={`${center.name} logo`}
                           width={80}
                           height={80}
-                          className="w-20 h-20 object-contain rounded-md border bg-white p-2"
+                          className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-md border bg-white p-2 flex-shrink-0"
                         />
                       )}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <CardTitle className="text-xl font-semibold text-slate-900">
-                            {center.name}
-                          </CardTitle>
-                        </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg sm:text-xl font-semibold text-slate-900 break-words">
+                          {center.name}
+                        </CardTitle>
                         {center.description && (
-                          <CardDescription className="text-sm">
+                          <CardDescription className="text-sm mt-1 line-clamp-2">
                             {center.description}
                           </CardDescription>
                         )}
                         {center.contact_info && (
-                          <div className="mt-3 space-y-2">
+                          <div className="mt-2 space-y-1.5">
                             {center.contact_info.phone && (
                               <div className="flex items-center gap-2 text-sm text-slate-600">
-                                <Phone className="w-4 h-4 text-slate-400" />
-                                {center.contact_info.phone}
+                                <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                                <span>{center.contact_info.phone}</span>
                               </div>
                             )}
                             {center.contact_info.address && (
@@ -301,23 +301,25 @@ export default function FieldManagerDashboard({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    {/* Actions row */}
+                    <div className="flex flex-wrap items-center gap-2">
                       <Button
                         variant="outline"
                         onClick={() => setIsCreateFieldModalOpen(true)}
-                        className="rounded"
+                        className="rounded flex-1 sm:flex-none"
                       >
                         <Plus className="w-4 h-4" />
-                        Aggiungi
+                        <span>Aggiungi Campo</span>
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => setEditingCenter(center)}
-                        className="rounded group/btn"
+                        className="rounded flex-1 sm:flex-none"
                       >
                         <Edit2 className="w-4 h-4" />
-                        Modifica
-                      </Button>{" "}
+                        <span>Modifica</span>
+                      </Button>
                       <Button
                         variant="ghost"
                         onClick={() =>
@@ -329,16 +331,14 @@ export default function FieldManagerDashboard({
                           })
                         }
                         disabled={deleting === center._id}
-                        className="rounded text-red-600 hover:text-red-700 border border-red-300 hover:bg-red-50"
+                        className="rounded text-red-600 hover:text-red-700 border border-red-300 hover:bg-red-50 flex-1 sm:flex-none"
                       >
                         {deleting === center._id ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </>
+                          <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
                           <>
                             <Trash2 className="w-4 h-4" />
-                            Elimina
+                            <span>Elimina</span>
                           </>
                         )}
                       </Button>
@@ -347,10 +347,11 @@ export default function FieldManagerDashboard({
                 </CardHeader>
 
                 {/* Center Fields */}
-                <CardContent className="px-6">
-                  <h1 className="text-2xl mb-4 font-semibold tracking-tight text-slate-900">
+                <CardContent className="px-4 sm:px-6 py-4 sm:py-6">
+                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 mb-4">
                     Campi
-                  </h1>
+                  </h2>
+
                   {fieldsLoading ? (
                     <div className="flex flex-col items-center justify-center py-12">
                       <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
@@ -360,7 +361,7 @@ export default function FieldManagerDashboard({
                     </div>
                   ) : fields.filter((f) => f.sports_center_id === center._id)
                       .length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
                       <div className="bg-slate-100 p-4 rounded-full mb-4">
                         <Users className="w-8 h-8 text-slate-400" />
                       </div>
@@ -370,118 +371,132 @@ export default function FieldManagerDashboard({
                       <p className="text-sm text-slate-500 mt-1">
                         Aggiungi il tuo primo campo a questo centro!
                       </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsCreateFieldModalOpen(true)}
+                        className="mt-4 rounded w-full sm:w-auto"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Aggiungi Campo
+                      </Button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
                       {fields
                         .filter((f) => f.sports_center_id === center._id)
-                        .map((field) => {
-                          return (
-                            <Card
-                              key={field._id}
-                              className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 p-0 overflow-hidden cursor-pointer"
-                            >
-                              <div className="relative h-40 overflow-hidden bg-muted">
-                                <Image
-                                  src={
-                                    field.image_url ??
-                                    "https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                  }
-                                  alt={`${field.name}`}
-                                  width={400}
-                                  height={160}
-                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                        .map((field) => (
+                          <Card
+                            key={field._id}
+                            className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 p-0 overflow-hidden"
+                          >
+                            {/* Field image */}
+                            <div className="relative h-36 sm:h-40 overflow-hidden bg-muted">
+                              <Image
+                                src={
+                                  field.image_url ??
+                                  "https://images.unsplash.com/photo-1601868071295-70ae1bf49090?q=80&w=1112&auto=format&fit=crop"
+                                }
+                                alt={field.name}
+                                width={400}
+                                height={160}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                              <Badge
+                                variant="secondary"
+                                className={`absolute top-3 right-3 text-xs ${
+                                  field.is_active
+                                    ? "bg-emerald-500 text-white"
+                                    : "bg-slate-500 text-white"
+                                }`}
+                              >
+                                {field.is_active ? "Attivo" : "Inattivo"}
+                              </Badge>
+                            </div>
 
-                                <Badge
-                                  variant="secondary"
-                                  className={`absolute top-3 right-3 ${
-                                    field.is_active
-                                      ? "bg-emerald-500 text-white"
-                                      : "bg-slate-500 text-white"
-                                  }`}
-                                >
-                                  {field.is_active ? "Attivo" : "Inattivo"}
-                                </Badge>
+                            {/* Field content */}
+                            <CardContent className="px-4 pb-4 pt-3 flex flex-col gap-3">
+                              {/* Name + price */}
+                              <div>
+                                <div className="flex items-start justify-between gap-2">
+                                  <h3 className="font-semibold text-base text-foreground line-clamp-1 flex-1">
+                                    {field.name}
+                                  </h3>
+                                  <div className="flex items-baseline gap-0.5 flex-shrink-0">
+                                    <span className="text-base font-bold text-foreground">
+                                      €{field.hourly_rate.toFixed(2)}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      /ora
+                                    </span>
+                                  </div>
+                                </div>
+                                {field.description && (
+                                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                    {field.description}
+                                  </p>
+                                )}
                               </div>
 
-                              <CardContent className="px-4 pb-4 flex flex-col h-38">
-                                <div className="mb-4">
-                                  <div className="flex justify-between">
-                                    <h3 className="font-semibold text-lg text-foreground line-clamp-1">
-                                      {field.name}
-                                    </h3>
-                                    <div className="flex items-baseline gap-1">
-                                      <span className="text-xl font-semibold text-foreground">
-                                        €{field.hourly_rate.toFixed(2)}
-                                      </span>
-                                      <span className="text-sm text-muted-foreground">
-                                        /ora
-                                      </span>
-                                    </div>
-                                  </div>
-                                  {field.description && (
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                      {field.description}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="space-y-2 mt-auto">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <Button
-                                      variant="outline"
-                                      onClick={() =>
-                                        setManagingAvailabilityField({
-                                          id: field._id,
-                                          name: field.name,
-                                        })
-                                      }
-                                      className="h-8 rounded"
-                                    >
-                                      <Calendar className="w-4 h-4" />
-                                      Disponibilità
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      onClick={() => setEditingField(field)}
-                                      className="h-8 rounded"
-                                    >
-                                      <Edit2 className="w-4 h-4" />
-                                      Modifica
-                                    </Button>
-                                  </div>
-
+                              {/* Action buttons */}
+                              <div className="space-y-2 mt-auto">
+                                <div className="grid grid-cols-2 gap-2">
                                   <Button
-                                    variant="ghost"
+                                    variant="outline"
+                                    size="sm"
                                     onClick={() =>
-                                      setDeleteDialog({
-                                        isOpen: true,
-                                        type: "field",
+                                      setManagingAvailabilityField({
                                         id: field._id,
                                         name: field.name,
                                       })
                                     }
-                                    disabled={deleting === field._id}
-                                    className="rounded h-8 w-full text-destructive hover:text-destructive hover:bg-destructive/10 border border-red-300"
+                                    className="h-8 rounded text-xs px-2"
                                   >
-                                    {deleting === field._id ? (
-                                      <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        Eliminazione...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Trash2 className="w-4 h-4" />
-                                        Elimina
-                                      </>
-                                    )}
+                                    <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className="truncate">
+                                      Disponibilità
+                                    </span>
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setEditingField(field)}
+                                    className="h-8 rounded text-xs px-2"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className="truncate">Modifica</span>
                                   </Button>
                                 </div>
-                              </CardContent>
-                            </Card>
-                          );
-                        })}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    setDeleteDialog({
+                                      isOpen: true,
+                                      type: "field",
+                                      id: field._id,
+                                      name: field.name,
+                                    })
+                                  }
+                                  disabled={deleting === field._id}
+                                  className="h-8 w-full rounded text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border border-red-300"
+                                >
+                                  {deleting === field._id ? (
+                                    <>
+                                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      Eliminazione...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      Elimina Campo
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                     </div>
                   )}
                 </CardContent>
@@ -489,6 +504,7 @@ export default function FieldManagerDashboard({
             ))
           )}
         </div>
+        <ManagerBookingsTab />
       </div>
 
       {/* Modals */}

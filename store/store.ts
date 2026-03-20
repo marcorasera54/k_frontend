@@ -7,6 +7,7 @@ import bookingReducer from "./slices/bookingSlice";
 import sportsCentersReducer from "./slices/sportsCenterSlice";
 import availabilityReducer from "./slices/availabilitySlice";
 import profileReducer from "./slices/profileSlice";
+import notificationReducer from "./slices/notificationSlice";
 
 const persistConfig = {
   key: "auth",
@@ -26,6 +27,7 @@ export const makeStore = () => {
       sportsCenters: sportsCentersReducer,
       availability: availabilityReducer,
       profile: profileReducer,
+      notifications: notificationReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

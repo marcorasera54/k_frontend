@@ -36,6 +36,7 @@ import {
   Euro,
   X,
   Check,
+  EuroIcon,
 } from "lucide-react";
 import { capitalize, cn, getUserInitials } from "@/lib/utils";
 import Image from "next/image";
@@ -240,7 +241,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
                         {/* Price Section */}
                         <div className="flex items-center gap-3 p-3 rounded bg-gray-50 border border-gray-200 mb-4">
                           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                            <DollarSign className="h-5 w-5 text-primary" />
+                            <EuroIcon className="h-5 w-5 text-primary" />
                           </div>
                           <div className="flex-1">
                             <p className="text-xs text-muted-foreground font-medium">

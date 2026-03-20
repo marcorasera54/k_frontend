@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loginUser } from "@/components/api/connectors/authApi";
+import { initiateGoogleLogin, loginUser } from "@/components/api/connectors/authApi";
 import { GoogleIcon } from "@/lib/constants/icons/google-icon";
 import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
@@ -56,12 +56,8 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Implement Google login logic
-    } catch (error) {
-      // Handle error
-    }
+  const handleGoogleLogin = () => {
+    dispatch(initiateGoogleLogin());
   };
 
   return (
@@ -147,7 +143,9 @@ const LoginForm: React.FC = () => {
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 sm:bg-white bg-gray-50 text-gray-500 font-medium">O</span>
+          <span className="px-4 sm:bg-white bg-gray-50 text-gray-500 font-medium">
+            O
+          </span>
         </div>
       </div>
 
@@ -171,10 +169,7 @@ const LoginForm: React.FC = () => {
 
       <p className="mt-8 text-center text-sm text-gray-600">
         Non hai ancora un account?{" "}
-        <a
-          href="/signup"
-          className="font-medium text-gray-900 hover:underline"
-        >
+        <a href="/signup" className="font-medium text-gray-900 hover:underline">
           Registrati
         </a>
       </p>

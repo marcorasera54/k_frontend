@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearError } from "@/store/slices/authSlice";
 import { setToast, TOAST_TYPE } from "@/components/ui/toast";
-import { signupUser } from "@/components/api/connectors/authApi";
+import {
+  initiateGoogleLogin,
+  signupUser,
+} from "@/components/api/connectors/authApi";
 import { GoogleIcon } from "@/lib/constants/icons/google-icon";
 
 const SignupForm: React.FC = () => {
@@ -107,12 +110,8 @@ const SignupForm: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Implement Google login logic
-    } catch (error) {
-      // Handle error
-    }
+  const handleGoogleLogin = () => {
+    dispatch(initiateGoogleLogin());
   };
 
   if (isSuccess) {

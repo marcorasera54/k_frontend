@@ -1,30 +1,33 @@
-"use client";
+import LandingHeader from "@/components/pages/landing/LandingHeader";
+import HeroSection from "@/components/pages/landing/Hero";
+import HowItWorksSection from "@/components/pages/landing/HowItWorks";
+import FeaturesSection from "@/components/pages/landing/Features";
+import SportsSection from "@/components/pages/landing/Sports";
+import ForManagersSection from "@/components/pages/landing/ForManagers";
+import TestimonialsSection from "@/components/pages/landing/Testimonials";
+import CtaSection from "@/components/pages/landing/Cta";
+import LandingFooter from "@/components/pages/landing/LandingFooter";
 
-import { useEffect } from "react";
-import UserHome from "@/components/pages/home/UserHome";
-import { useAppSelector } from "@/store/hooks";
-import { useRouter } from "next/navigation";
-
-export default function HomePage() {
-  const router = useRouter();
-  const { user, isAuthenticated, isLoading } = useAppSelector(
-    (state) => state.auth,
-  );
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  if (!user) {
-    return null;
-  }
-
+export default function LandingPage() {
   return (
-    <div className="relative">
-      {/* Main Content */}
-      <UserHome user={user} />
+    <div className="min-h-screen flex flex-col">
+      <LandingHeader />
+      <main className="flex-1">
+        <HeroSection />
+        <section id="come-funziona">
+          <HowItWorksSection />
+        </section>
+        <FeaturesSection />
+        <section id="sport">
+          <SportsSection />
+        </section>
+        <ForManagersSection />
+        <section id="recensioni">
+          <TestimonialsSection />
+        </section>
+        <CtaSection />
+      </main>
+      <LandingFooter />
     </div>
   );
 }

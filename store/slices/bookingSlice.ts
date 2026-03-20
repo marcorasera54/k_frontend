@@ -5,16 +5,24 @@ import {
   fetchAllBookings,
   createBooking,
   cancelBooking,
+  managerCancelBooking,
 } from "@/components/api/connectors/bookingApi";
 
 interface BookingState {
   bookings: Booking[];
+  pagination: {
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+  };
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: BookingState = {
   bookings: [],
+  pagination: { total: 0, page: 1, page_size: 10, total_pages: 0 },
   isLoading: false,
   error: null,
 };
@@ -47,7 +55,13 @@ const bookingSlice = createSlice({
       })
       .addCase(fetchAllBookings.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.bookings = action.payload;
+        state.bookings = action.payload.bookings;
+        state.pagination = {
+          total: action.payload.total,
+          page: action.payload.page,
+          page_size: action.payload.page_size,
+          total_pages: action.payload.total_pages,
+        };
       })
       .addCase(fetchAllBookings.rejected, (state, action) => {
         state.isLoading = false;
@@ -71,7 +85,9 @@ const bookingSlice = createSlice({
       })
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.isLoading = false;
-        const index = state.bookings.findIndex((b) => b._id === action.payload._id);
+        const index = state.bookings.findIndex(
+          (b) => b._id === action.payload._id,
+        );
         if (index !== -1) {
           state.bookings[index] = action.payload;
         }
@@ -79,6 +95,23 @@ const bookingSlice = createSlice({
       .addCase(cancelBooking.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to cancel booking";
+      })
+      .addCase(managerCancelBooking.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(managerCancelBooking.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const index = state.bookings.findIndex(
+          (b) => b._id === action.payload._id,
+        );
+        if (index !== -1) {
+          state.bookings[index] = action.payload;
+        }
+      })
+      .addCase(managerCancelBooking.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Impossibile annullare la prenotazione";
       });
   },
 });

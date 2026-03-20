@@ -14,6 +14,9 @@ export interface Booking {
   total_price: number;
   created_at: string;
   updated_at: string;
+  user_first_name?: string;
+  user_last_name?: string;
+  user_email?: string;
 }
 
 export interface BookingCreateRequest {
@@ -25,4 +28,26 @@ export interface BookingCreateRequest {
 export interface BookingWithDetails extends Booking {
   field_name?: string;
   sport_type?: string;
+}
+
+export interface BookingWithFieldInfo extends Booking {
+  field_name?: string;
+  sport_type?: string;
+  sports_center_name?: string;
+}
+
+export interface PaginatedBookingsResponse {
+  bookings: Booking[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface BookingFilters {
+  field_id?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  page_size?: number;
 }

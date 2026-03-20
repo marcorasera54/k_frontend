@@ -1,7 +1,14 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AuthState, User } from "@/lib/types/auth";
 import api from "@/components/api/api";
-import { loginUser, signupUser, verifyEmail, logoutUser } from "@/components/api/connectors/authApi";
+import {
+  loginUser,
+  signupUser,
+  verifyEmail,
+  logoutUser,
+  googleCallback,
+  initiateGoogleLogin,
+} from "@/components/api/connectors/authApi";
 
 const initialState: AuthState = {
   user: null,
@@ -101,6 +108,30 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.isLoading = false;
         state.error = null;
+      })
+
+      .addCase(initiateGoogleLogin.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initiateGoogleLogin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Failed to start Google login";
+      })
+      .addCase(googleCallback.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(googleCallback.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(googleCallback.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Google login failed";
+        state.isAuthenticated = false;
       })
 
       .addCase(logoutUser.fulfilled, (state) => {
