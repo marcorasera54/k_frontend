@@ -13,7 +13,7 @@ export const fetchFields = createAsyncThunk<
     if (params.is_active !== undefined) queryParams.append("is_active", String(params.is_active));
     if (params.sports_center_id) queryParams.append("sports_center_id", params.sports_center_id);
 
-    const response = await api.get<Field[]>(`/fields?${queryParams.toString()}`);
+    const response = await api.get<Field[]>(`/fields/?${queryParams.toString()}`);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to fetch fields";
