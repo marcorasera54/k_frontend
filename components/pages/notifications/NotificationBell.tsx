@@ -10,6 +10,7 @@ import {
 } from "@/components/api/connectors/notificationApi";
 import { NOTIFICATION_CONFIG } from "./NotificationUtils";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function NotificationBell() {
   const dispatch = useAppDispatch();
@@ -74,94 +75,99 @@ export default function NotificationBell() {
       </button>
 
       {/* Panel */}
-      {open && (
-        <div
-          ref={panelRef}
-          className="absolute right-0 top-11 z-50 w-80 rounded-lg border bg-background shadow-lg overflow-hidden"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-4">
-            {unreadCount > 0 && (
+      <div className="relative overflow-visible">
+        {" "}
+        {open && (
+          <div
+            ref={panelRef}
+            className="fixed right-4 sm:right-10 top-16 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-lg border bg-background shadow-lg overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex justify-center items-center px-4 py-1">
+              {unreadCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleMarkAll}
+                  className="flex w-full items-center justify-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors cursor-pointer"
+                >
+                  <CheckCheck className="h-3.5 w-3.5" />
+                  Segna tutte come lette
+                </Button>
+              )}
+            </div>
+
+            {/* Last 5 */}
+            <div className="divide-y max-h-[340px] overflow-y-auto">
+              {last5.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center px-4">
+                  <Inbox className="h-8 w-8 text-muted-foreground mb-2" />
+                  <p className="text-sm font-medium">Nessuna notifica</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Le notifiche appariranno qui
+                  </p>
+                </div>
+              ) : (
+                last5.map((n) => {
+                  const config = NOTIFICATION_CONFIG[n.type] ?? {
+                    Icon: Bell,
+                    iconColor: "text-gray-500",
+                    dotColor: "bg-gray-400",
+                    bgColor: "",
+                    label: "Notifica",
+                  };
+                  const { Icon, iconColor, dotColor, bgColor } = config;
+
+                  return (
+                    <div
+                      key={n._id}
+                      onClick={() => !n.is_read && handleMarkRead(n._id)}
+                      className={`flex gap-3 items-start px-4 py-3 transition-colors ${
+                        n.is_read
+                          ? "hover:bg-muted/40"
+                          : `${bgColor} cursor-pointer`
+                      }`}
+                    >
+                      {/* Icon bubble */}
+                      <div className="shrink-0 flex h-8 w-6 items-center justify-center">
+                        <Icon className={`h-4.5 w-4.5 ${iconColor}`} />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className={`text-sm leading-tight ${n.is_read ? "font-medium text-muted-foreground" : "font-semibold"}`}
+                        >
+                          {n.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                          {n.message}
+                        </p>
+                      </div>
+
+                      {!n.is_read && (
+                        <span
+                          className={`shrink-0 mt-2 h-2 w-2 rounded-full ${dotColor}`}
+                        />
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t px-2 py-1.5">
               <button
-                onClick={handleMarkAll}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                onClick={goToInbox}
+                className="flex w-full items-center justify-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors cursor-pointer"
               >
-                <CheckCheck className="h-3.5 w-3.5" />
-                Segna tutte come lette
+                <Inbox className="h-4 w-4" />
+                Vedi tutte le notifiche
               </button>
-            )}
+            </div>
           </div>
-
-          {/* Last 5 */}
-          <div className="divide-y max-h-[340px] overflow-y-auto">
-            {last5.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-center px-4">
-                <Inbox className="h-8 w-8 text-muted-foreground mb-2" />
-                <p className="text-sm font-medium">Nessuna notifica</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Le notifiche appariranno qui
-                </p>
-              </div>
-            ) : (
-              last5.map((n) => {
-                const config = NOTIFICATION_CONFIG[n.type] ?? {
-                  Icon: Bell,
-                  iconColor: "text-gray-500",
-                  dotColor: "bg-gray-400",
-                  bgColor: "",
-                  label: "Notifica",
-                };
-                const { Icon, iconColor, dotColor, bgColor } = config;
-
-                return (
-                  <div
-                    key={n._id}
-                    onClick={() => !n.is_read && handleMarkRead(n._id)}
-                    className={`flex gap-3 items-start px-4 py-3 transition-colors ${
-                      n.is_read
-                        ? "hover:bg-muted/40"
-                        : `${bgColor} cursor-pointer`
-                    }`}
-                  >
-                    {/* Icon bubble */}
-                    <div className="shrink-0 flex h-8 w-6 items-center justify-center bg-background">
-                      <Icon className={`h-4.5 w-4.5 ${iconColor}`} />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm leading-tight ${n.is_read ? "font-medium text-muted-foreground" : "font-semibold"}`}
-                      >
-                        {n.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                        {n.message}
-                      </p>
-                    </div>
-
-                    {!n.is_read && (
-                      <span
-                        className={`shrink-0 mt-2 h-2 w-2 rounded-full ${dotColor}`}
-                      />
-                    )}
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="border-t px-2 py-1.5">
-            <button
-              onClick={goToInbox}
-              className="flex w-full items-center justify-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors cursor-pointer"
-            >
-              <Inbox className="h-4 w-4" />
-              Vedi tutte le notifiche
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -24,9 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle, ImageIcon, X, Upload } from "lucide-react";
+import { Loader2, ImageIcon, X, Upload } from "lucide-react";
 import { uploadImage } from "../api/connectors/uploadApi";
+import { setToast, TOAST_TYPE } from "../ui/toast";
 
 interface CreateSportsCenterModalProps {
   isOpen: boolean;
@@ -56,11 +56,9 @@ export default function CreateSportsCenterModal({
     },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     try {
@@ -97,7 +95,11 @@ export default function CreateSportsCenterModal({
         }),
       ).unwrap();
 
-      alert("Centro sportivo creato con successo!");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Centro sportivo creato",
+        message: "Il centro sportivo è stato creato con successo.",
+      });
       onClose();
       setFormData({
         name: "",
@@ -112,7 +114,11 @@ export default function CreateSportsCenterModal({
       setImagePreviews([]);
     } catch (err: any) {
       setIsUploading(false);
-      setError(err || "Impossibile creare il centro sportivo");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile creare il centro sportivo.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -159,13 +165,6 @@ export default function CreateSportsCenterModal({
             Aggiungi un nuovo centro sportivo alla tua organizzazione
           </DialogDescription>
         </DialogHeader>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}

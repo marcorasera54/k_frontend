@@ -6,8 +6,6 @@ import api from "@/components/api/api";
 export interface UpdateProfilePayload {
   first_name?: string;
   last_name?: string;
-  phone?: string;
-  bio?: string;
 }
 
 export interface ChangePasswordPayload {

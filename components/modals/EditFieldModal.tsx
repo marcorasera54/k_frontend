@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { setToast, TOAST_TYPE } from "../ui/toast";
 
 interface EditFieldModalProps {
   field: Field;
@@ -48,7 +48,6 @@ export default function EditFieldModal({
   });
   const { sportsCenters } = useAppSelector((state) => state.sportsCenters);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchMySportsCenters());
@@ -67,7 +66,6 @@ export default function EditFieldModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     try {
@@ -81,10 +79,18 @@ export default function EditFieldModal({
         }),
       ).unwrap();
 
-      alert("Campo aggiornato con successo!");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Campo aggiornato",
+        message: "Le modifiche sono state salvate con successo.",
+      });
       onClose();
     } catch (err: any) {
-      setError(err || "Impossibile aggiornare il campo");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile aggiornare il campo.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -99,13 +105,6 @@ export default function EditFieldModal({
             Aggiorna i dettagli del tuo campo sportivo
           </DialogDescription>
         </DialogHeader>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -167,7 +166,7 @@ export default function EditFieldModal({
             >
               <SelectTrigger
                 id="sport_type"
-                className="rounded h-10 border-gray-300 bg-white"
+                className="w-full rounded h-10 border-gray-300 bg-white"
               >
                 <SelectValue placeholder="Seleziona tipo di sport" />
               </SelectTrigger>
@@ -225,7 +224,7 @@ export default function EditFieldModal({
               htmlFor="is_active_edit"
               className="text-sm font-normal cursor-pointer"
             >
-              Il campo è attivo e disponibile per la prenotazione
+              Il campo è disponibile per la prenotazione
             </Label>
           </div>
 
@@ -238,7 +237,11 @@ export default function EditFieldModal({
             >
               Annulla
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="rounded flex-1">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="rounded flex-1"
+            >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}

@@ -52,6 +52,7 @@ import { it } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import AppHeader from "@/components/layout/AppHeader";
+import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
 export default function BookingPage() {
   const { user } = useAppSelector((state) => state.auth);
@@ -79,7 +80,6 @@ export default function BookingPage() {
     end_time: string;
     price: number;
   } | null>(null);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
   const [showBookingPanel, setShowBookingPanel] = useState(false);
 
   const sportTypeLabels: Record<SportType, string> = {
@@ -123,18 +123,24 @@ export default function BookingPage() {
         }),
       ).unwrap();
 
-      setBookingSuccess(true);
       setSelectedSlot(null);
       setShowBookingPanel(false);
 
       const dateStr = format(selectedDate, "yyyy-MM-dd");
       dispatch(fetchAvailableSlots({ fieldId, date: dateStr }));
 
-      setTimeout(() => {
-        setBookingSuccess(false);
-      }, 3000);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Prenotazione confermata",
+        message: "La tua prenotazione è stata effettuata con successo.",
+      });
     } catch (error) {
       console.error("Booking failed:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Prenotazione fallita",
+        message: "Impossibile completare la prenotazione. Riprova.",
+      });
     }
   };
 
@@ -184,32 +190,13 @@ export default function BookingPage() {
     );
   }
 
+  const formatTime = (time: string) => time.slice(0, 5);
+
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
       <AppHeader user={user} />
       {/* Main Content */}
       <div className="max-w-7xl mx-auto p-6 lg:p-8 space-y-8">
-        {/* Success Alert */}
-        {bookingSuccess && (
-          <Alert className="mb-6 bg-emerald-50 border-emerald-200 animate-in slide-in-from-top">
-            <Check className="h-4 w-4 text-emerald-600" />
-            <AlertDescription className="text-emerald-800 font-medium">
-              Prenotazione confermata con successo!
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Error Alert */}
-        {bookingError && (
-          <Alert
-            variant="destructive"
-            className="mb-6 animate-in slide-in-from-top"
-          >
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{bookingError}</AlertDescription>
-          </Alert>
-        )}
-
         {/* Field Info Card - Enhanced */}
         <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 p-0 overflow-hidden">
           <div className="relative h-40 sm:h-48 bg-gradient-to-br from-primary via-primary/90 to-primary/70">
@@ -428,10 +415,11 @@ export default function BookingPage() {
                                       : "text-gray-400",
                                   )}
                                 >
-                                  {slot.start_time}
+                                  Orario: {formatTime(slot.start_time)}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {slot.start_time} - {slot.end_time}
+                                  {formatTime(slot.start_time)} -{" "}
+                                  {formatTime(slot.end_time)}
                                 </p>
                               </div>
                             </div>
@@ -479,7 +467,6 @@ export default function BookingPage() {
                                   {bookingLoading ? (
                                     <>
                                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                      Prenotazione...
                                     </>
                                   ) : (
                                     <>Prenota</>

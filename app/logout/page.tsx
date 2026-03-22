@@ -28,7 +28,7 @@ export default function LogoutPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="flex flex-col items-center gap-4">
-        <div className="h-8 w-8 rounded-full border-2 border-slate-300 border-t-blue-600 animate-spin" />
+        <div className="h-8 w-8 rounded-full border-2 border-slate-300 border-t-black animate-spin" />
         <p className="text-slate-500 font-medium">Disconnessione in corso...</p>
       </div>
     </div>

@@ -26,7 +26,7 @@ const SignupForm: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(clearError());

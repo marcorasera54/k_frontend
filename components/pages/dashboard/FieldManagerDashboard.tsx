@@ -66,6 +66,7 @@ import AppHeader from "@/components/layout/AppHeader";
 import { SportsCenter } from "@/lib/types/sports_center";
 import EditSportsCenterModal from "@/components/modals/EditSportsCenterModal";
 import ManagerBookingsTab from "./manager/ManagerBookings";
+import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
 interface FieldManagerDashboardProps {
   user: User;
@@ -112,8 +113,17 @@ export default function FieldManagerDashboard({
     try {
       await dispatch(deleteSportsCenter(centerId)).unwrap();
       setDeleteDialog({ isOpen: false, type: "center", id: "", name: "" });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Centro eliminato",
+        message: "Il centro sportivo è stato eliminato con successo.",
+      });
     } catch (error: any) {
-      alert(error || "Failed to delete sports center");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: error || "Impossibile eliminare il centro sportivo.",
+      });
     } finally {
       setDeleting(null);
     }
@@ -124,8 +134,17 @@ export default function FieldManagerDashboard({
     try {
       await dispatch(deleteField(fieldId)).unwrap();
       setDeleteDialog({ isOpen: false, type: "field", id: "", name: "" });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Campo eliminato",
+        message: "Il campo è stato eliminato con successo.",
+      });
     } catch (error: any) {
-      alert(error || "Failed to delete field");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: error || "Impossibile eliminare il campo.",
+      });
     } finally {
       setDeleting(null);
     }
@@ -139,29 +158,21 @@ export default function FieldManagerDashboard({
       title: "Centri Sportivi",
       value: sportsCenters.length,
       icon: Building2,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
     },
     {
       title: "Campi Attivi",
       value: activeFields.length,
       icon: Users,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
     },
     {
       title: "Prenotazioni Totali",
       value: bookings.length,
       icon: Calendar,
-      color: "text-violet-600",
-      bgColor: "bg-violet-50",
     },
     {
       title: "Ricavi Totali",
       value: `€${totalRevenue.toFixed(2)}`,
       icon: EuroIcon,
-      color: "text-amber-600",
-      bgColor: "bg-amber-50",
     },
   ];
 
@@ -571,7 +582,7 @@ export default function FieldManagerDashboard({
                   : handleDeleteField(deleteDialog.id)
               }
               disabled={!!deleting}
-              className="bg-red-600 hover:bg-red-700 rounded"
+              className="bg-red-600 hover:bg-red-700"
             >
               {deleting ? (
                 <>

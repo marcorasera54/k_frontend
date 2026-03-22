@@ -11,12 +11,12 @@
 
 ## UI / UX Improvements
 
-- [ ] Improve modal components (design, accessibility, responsiveness, logo)
-
+- [CHECK] Improve modal components (design, accessibility, responsiveness, )
+- [CHECK] Implement a logo
 ## Bug Fixing
 
-- [ ] Review and fix existing bugs
-- [ ] Perform general testing across the application
+- [CHECK] Review and fix existing bugs
+- [CHECK] Perform general testing across the application
 
 ## Landing Page
 

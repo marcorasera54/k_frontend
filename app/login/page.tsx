@@ -22,9 +22,9 @@ export default function LoginPage() {
       <main className="min-h-screen flex items-center justify-center px-4">
         <div className="w-full max-w-6xl">
           <div className="sm:bg-white sm:rounded-xl sm:shadow-sm sm:overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 pt-10 sm:pt-0">
               {/* Left */}
-              <div className="p-6 sm:p-6 lg:p-10 flex items-center justify-center">
+              <div className="p-4 sm:p-6 lg:p-10 flex items-center justify-center">
                 <div className="w-full max-w-md">
                   <LoginForm />
                 </div>

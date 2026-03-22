@@ -53,6 +53,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
 const STATUS_CONFIG: Record<
   BookingStatus,
@@ -139,9 +140,18 @@ export default function ManagerBookingsTab() {
     setCancelling(cancelDialog.bookingId);
     try {
       await dispatch(managerCancelBooking(cancelDialog.bookingId)).unwrap();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Prenotazione annullata",
+        message: "La prenotazione è stata annullata con successo.",
+      });
       fetchBookings();
     } catch (e: any) {
-      alert(e || "Errore durante l'annullamento");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: e || "Errore durante l'annullamento.",
+      });
     } finally {
       setCancelling(null);
       setCancelDialog({ open: false, bookingId: "" });
@@ -414,7 +424,7 @@ export default function ManagerBookingsTab() {
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       Prenotazione
                     </p>
-                    <div className="rounded-lg border divide-y">
+                    <div className="rounded border divide-y">
                       {[
                         {
                           label: "Campo",
@@ -455,7 +465,6 @@ export default function ManagerBookingsTab() {
                           variant="outline"
                           className={`flex items-center gap-1 text-xs ${statusCfg.color}`}
                         >
-                          <StatusIcon className="h-3 w-3" />
                           {statusCfg.label}
                         </Badge>
                       </div>
@@ -476,7 +485,6 @@ export default function ManagerBookingsTab() {
                           });
                         }}
                       >
-                        <XCircle className="h-4 w-4 mr-2" />
                         Annulla prenotazione
                       </Button>
                     )}
@@ -496,7 +504,6 @@ export default function ManagerBookingsTab() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-red-500" />
               Annulla prenotazione
             </AlertDialogTitle>
             <AlertDialogDescription>

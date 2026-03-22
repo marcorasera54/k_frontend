@@ -37,6 +37,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AlertCircle, Clock, Ban, Trash2 } from "lucide-react";
+import { setToast, TOAST_TYPE } from "../ui/toast";
 
 interface ManageAvailabilityModalProps {
   fieldId: string;
@@ -58,8 +59,6 @@ export default function ManageAvailabilityModal({
   const [activeTab, setActiveTab] = useState<"schedule" | "blocked">(
     "schedule",
   );
-  const [error, setError] = useState<string | null>(null);
-
   const [scheduleForm, setScheduleForm] = useState({
     day_of_week: DayOfWeek.MONDAY,
     operating_hours: {
@@ -85,19 +84,15 @@ export default function ManageAvailabilityModal({
 
   const handleCreateSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
     try {
       await dispatch(
-        createAvailability({
-          field_id: fieldId,
-          ...scheduleForm,
-        }),
+        createAvailability({ field_id: fieldId, ...scheduleForm }),
       ).unwrap();
-
-      alert(
-        "Orari di apertura creati con successo! Gli slot saranno generati automaticamente.",
-      );
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Orari creati",
+        message: "Gli slot verranno generati automaticamente.",
+      });
       setScheduleForm({
         day_of_week: DayOfWeek.MONDAY,
         operating_hours: {
@@ -107,34 +102,42 @@ export default function ManageAvailabilityModal({
         },
       });
     } catch (err: any) {
-      setError(err || "Impossibile creare gli orari di apertura");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile creare gli orari di apertura.",
+      });
     }
   };
 
   const handleDeleteSchedule = async (availabilityId: string) => {
-    if (!confirm("Sei sicuro di voler eliminare questo orario?")) return;
-
     try {
       await dispatch(deleteAvailability(availabilityId)).unwrap();
-      alert("Orario eliminato con successo!");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Orario eliminato",
+        message: "L'orario è stato rimosso con successo.",
+      });
     } catch (err: any) {
-      alert(err || "Impossibile eliminare l'orario");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile eliminare l'orario.",
+      });
     }
   };
 
   const handleCreateBlockedSlot = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
     try {
       await dispatch(
-        createBlockedSlot({
-          field_id: fieldId,
-          ...blockedForm,
-        }),
+        createBlockedSlot({ field_id: fieldId, ...blockedForm }),
       ).unwrap();
-
-      alert("Fascia oraria bloccata con successo!");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Slot bloccato",
+        message: "La fascia oraria è stata bloccata con successo.",
+      });
       setBlockedForm({
         blocked_date: "",
         start_time: "09:00",
@@ -142,18 +145,28 @@ export default function ManageAvailabilityModal({
         reason: "",
       });
     } catch (err: any) {
-      setError(err || "Impossibile bloccare la fascia oraria");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile bloccare la fascia oraria.",
+      });
     }
   };
 
   const handleDeleteBlockedSlot = async (blockedSlotId: string) => {
-    if (!confirm("Sei sicuro di voler rimuovere questo slot bloccato?")) return;
-
     try {
       await dispatch(deleteBlockedSlot(blockedSlotId)).unwrap();
-      alert("Slot bloccato rimosso con successo!");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Slot rimosso",
+        message: "Lo slot bloccato è stato rimosso con successo.",
+      });
     } catch (err: any) {
-      alert(err || "Impossibile rimuovere lo slot bloccato");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile rimuovere lo slot bloccato.",
+      });
     }
   };
 
@@ -178,23 +191,13 @@ export default function ManageAvailabilityModal({
           <DialogDescription>{fieldName}</DialogDescription>
         </DialogHeader>
 
-        {error && (
-          <Alert
-            variant="destructive"
-            className="border border-gray-200 bg-white rounded transition-all duration-300 py-4 cursor-pointer"
-          >
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
         <Tabs
           value={activeTab}
           onValueChange={(value) =>
             setActiveTab(value as "schedule" | "blocked")
           }
         >
-          <TabsList className="rounded-md grid w-full grid-cols-2">
+          <TabsList className="rounded-md grid w-full grid-cols-2 cursor-pointer">
             <TabsTrigger
               value="schedule"
               className="rounded flex items-center gap-2"
@@ -212,7 +215,7 @@ export default function ManageAvailabilityModal({
           </TabsList>
 
           <TabsContent value="schedule" className="space-y-6 mt-6">
-            <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
+            <Card className="p-0 rounded-md shadow-none bg-white py-4">
               <CardHeader>
                 <CardTitle>Imposta Orari di Apertura</CardTitle>
                 <CardDescription>
@@ -359,7 +362,7 @@ export default function ManageAvailabilityModal({
                   Caricamento...
                 </div>
               ) : availabilities.length === 0 ? (
-                <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
+                <Card className="p-0 rounded-md shadow-none bg-white py-4">
                   <CardContent className="text-center py-8 text-muted-foreground">
                     Nessun orario di apertura configurato
                   </CardContent>
@@ -369,7 +372,7 @@ export default function ManageAvailabilityModal({
                   {availabilities.map((availability) => (
                     <Card
                       key={availability._id}
-                      className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer"
+                      className="p-0 rounded-md shadow-none bg-white py-4"
                     >
                       <CardContent>
                         <div className="flex justify-between items-start">
@@ -419,7 +422,7 @@ export default function ManageAvailabilityModal({
           </TabsContent>
 
           <TabsContent value="blocked" className="space-y-6 mt-6">
-            <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
+            <Card className="p-0 rounded-md shadow-none bg-white py-4">
               <CardHeader>
                 <CardTitle>Blocca Fascia Oraria</CardTitle>
                 <CardDescription>
@@ -520,7 +523,7 @@ export default function ManageAvailabilityModal({
                   Caricamento...
                 </div>
               ) : blockedSlots.length === 0 ? (
-                <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 cursor-pointer">
+                <Card className="p-0 rounded-md shadow-none bg-white py-4">
                   <CardContent className="text-center py-8 text-muted-foreground">
                     Nessuna fascia oraria bloccata
                   </CardContent>
@@ -528,7 +531,10 @@ export default function ManageAvailabilityModal({
               ) : (
                 <div className="space-y-3">
                   {blockedSlots.map((blocked) => (
-                    <Card key={blocked._id}>
+                    <Card
+                      key={blocked._id}
+                      className="p-0 rounded-md shadow-none bg-white py-4"
+                    >
                       <CardContent className="pt-6">
                         <div className="flex justify-between items-start">
                           <div>

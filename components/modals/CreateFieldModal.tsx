@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle, ImageIcon, X } from "lucide-react";
 import { uploadImage } from "../api/connectors/uploadApi";
+import { setToast, TOAST_TYPE } from "../ui/toast";
 
 interface CreateFieldModalProps {
   isOpen: boolean;
@@ -47,7 +48,6 @@ export default function CreateFieldModal({
     is_active: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -59,7 +59,6 @@ export default function CreateFieldModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     try {
@@ -84,6 +83,11 @@ export default function CreateFieldModal({
       ).unwrap();
 
       onClose();
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Campo creato",
+        message: "Il campo è stato creato con successo.",
+      });
       setFormData({
         sports_center_id: "",
         name: "",
@@ -96,7 +100,11 @@ export default function CreateFieldModal({
       setImagePreview(null);
     } catch (err: any) {
       setIsUploading(false);
-      setError(err || "Impossibile creare il campo");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: err || "Impossibile creare il campo.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +113,6 @@ export default function CreateFieldModal({
   const handleClose = () => {
     if (!isSubmitting) {
       onClose();
-      setError(null);
     }
   };
 
@@ -123,7 +130,8 @@ export default function CreateFieldModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-full sm:max-w-[500px] max-h-[90vh] overflow-y-auto px-4 sm:px-6">
+        {" "}
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Crea Nuovo Campo
@@ -133,14 +141,6 @@ export default function CreateFieldModal({
             campi contrassegnati con * sono obbligatori.
           </DialogDescription>
         </DialogHeader>
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="sports_center_id">
@@ -155,7 +155,7 @@ export default function CreateFieldModal({
             >
               <SelectTrigger
                 id="sports_center_id"
-                className="rounded h-10 border-gray-300 bg-white"
+                className="w-full rounded h-10 border-gray-300 bg-white"
               >
                 <SelectValue placeholder="Seleziona un centro sportivo" />
               </SelectTrigger>
@@ -254,7 +254,7 @@ export default function CreateFieldModal({
             >
               <SelectTrigger
                 id="sport_type"
-                className="rounded h-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                className="w-full rounded h-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -313,7 +313,7 @@ export default function CreateFieldModal({
               htmlFor="is_active"
               className="text-sm font-normal cursor-pointer"
             >
-              Il campo è attivo e disponibile per la prenotazione
+              Il campo è disponibile per la prenotazione
             </Label>
           </div>
           <div className="flex gap-3 pt-4">

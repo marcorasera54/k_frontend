@@ -42,6 +42,7 @@ import { capitalize, cn, getUserInitials } from "@/lib/utils";
 import Image from "next/image";
 import { it } from "date-fns/locale";
 import AppHeader from "@/components/layout/AppHeader";
+import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
 interface UserDashboardProps {
   user: User;
@@ -62,14 +63,20 @@ export default function UserDashboard({ user }: UserDashboardProps) {
   }, [dispatch]);
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
-
     setCancelling(bookingId);
     try {
       await dispatch(cancelBooking(bookingId)).unwrap();
-      alert("Booking cancelled successfully");
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Prenotazione annullata",
+        message: "La tua prenotazione è stata annullata con successo.",
+      });
     } catch (error: any) {
-      alert(error || "Failed to cancel booking");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: error || "Impossibile annullare la prenotazione.",
+      });
     } finally {
       setCancelling(null);
     }
@@ -269,7 +276,6 @@ export default function UserDashboard({ user }: UserDashboardProps) {
                                 {cancelling === booking._id ? (
                                   <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Annullamento...
                                   </>
                                 ) : (
                                   <>Annulla Prenotazione</>

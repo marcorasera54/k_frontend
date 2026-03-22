@@ -3,21 +3,14 @@
 import { useEffect, useState } from "react";
 import {
   User as UserIcon,
-  LogOut,
-  ChevronLeft,
   Shield,
   KeyRound,
   Trash2,
-  CheckCircle2,
-  AlertCircle,
   Eye,
   EyeOff,
   Save,
   Mail,
-  Phone,
-  FileText,
   BadgeCheck,
-  Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,14 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,7 +29,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -55,45 +39,10 @@ import {
   changePassword,
   deleteAccount,
 } from "@/components/api/connectors/profileApi";
-import { clearProfileMessages } from "@/store/slices/profileSlice";
 import { clearAuth } from "@/store/slices/authSlice";
-import { logoutUser } from "@/components/api/connectors/authApi";
-import { cn } from "@/lib/utils";
 import AppHeader from "@/components/layout/AppHeader";
-
-function FeedbackBanner({
-  type,
-  message,
-  onClose,
-}: {
-  type: "success" | "error";
-  message: string;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-3 rounded p-3 text-sm",
-        type === "success"
-          ? "bg-green-50 text-green-800 border border-green-200"
-          : "bg-red-50 text-red-800 border border-red-200",
-      )}
-    >
-      {type === "success" ? (
-        <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-      ) : (
-        <AlertCircle className="h-4 w-4 flex-shrink-0" />
-      )}
-      <span className="flex-1">{message}</span>
-      <button
-        onClick={onClose}
-        className="text-current opacity-60 hover:opacity-100"
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
+import { toast } from "sonner";
+import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
 function ProfileSection({
   title,
@@ -131,13 +80,7 @@ export default function ProfilePage() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [bio, setBio] = useState("");
   const [infoSaving, setInfoSaving] = useState(false);
-  const [infoFeedback, setInfoFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -146,18 +89,10 @@ export default function ProfilePage() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [pwSaving, setPwSaving] = useState(false);
-  const [pwFeedback, setPwFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
 
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeletePw, setShowDeletePw] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [deleteFeedback, setDeleteFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
 
   useEffect(() => {
     dispatch(fetchProfile());
@@ -167,43 +102,45 @@ export default function ProfilePage() {
     if (profile) {
       setFirstName(profile.first_name || "");
       setLastName(profile.last_name || "");
-      setPhone(profile.phone || "");
-      setBio(profile.bio || "");
     }
   }, [profile]);
 
   async function handleSaveInfo(e: React.FormEvent) {
     e.preventDefault();
     setInfoSaving(true);
-    setInfoFeedback(null);
+
     const result = await dispatch(
-      updateProfile({ first_name: firstName, last_name: lastName, phone, bio }),
+      updateProfile({ first_name: firstName, last_name: lastName }),
     );
     setInfoSaving(false);
     if (updateProfile.fulfilled.match(result)) {
-      setInfoFeedback({
-        type: "success",
-        message: "Profile updated successfully.",
+      toast.success("Profilo aggiornato!", {
+        description: "Le tue informazioni sono state salvate.",
       });
     } else {
-      setInfoFeedback({
-        type: "error",
-        message: (result.payload as string) || "Failed to update profile.",
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: "Impossibile aggiornare il profilo.",
       });
     }
   }
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
-    setPwFeedback(null);
     if (newPassword !== confirmPassword) {
-      setPwFeedback({ type: "error", message: "New passwords do not match." });
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: "Le password non coincidono.",
+      });
       return;
     }
     if (newPassword.length < 8) {
-      setPwFeedback({
-        type: "error",
-        message: "Password must be at least 8 characters.",
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message: "La password deve essere lunga almeno 8 caratteri.",
       });
       return;
     }
@@ -216,41 +153,37 @@ export default function ProfilePage() {
     );
     setPwSaving(false);
     if (changePassword.fulfilled.match(result)) {
-      setPwFeedback({
-        type: "success",
-        message: "Password changed successfully.",
+      toast.success("Password aggiornata!", {
+        description: "La tua password è stata cambiata con successo.",
       });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } else {
-      setPwFeedback({
-        type: "error",
-        message: (result.payload as string) || "Failed to change password.",
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message:
+          (result.payload as string) || "Impossibile cambiare la password.",
       });
     }
   }
 
   async function handleDeleteAccount() {
     setDeleting(true);
-    setDeleteFeedback(null);
     const result = await dispatch(deleteAccount(deletePassword));
     setDeleting(false);
     if (deleteAccount.fulfilled.match(result)) {
       dispatch(clearAuth());
       router.push("/login");
     } else {
-      setDeleteFeedback({
-        type: "error",
-        message: (result.payload as string) || "Failed to delete account.",
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Errore",
+        message:
+          (result.payload as string) || "Impossibile eliminare l'account.",
       });
     }
-  }
-
-  async function handleLogout() {
-    await dispatch(logoutUser());
-    dispatch(clearAuth());
-    router.push("/login");
   }
 
   const displayUser = profile || user;
@@ -328,28 +261,6 @@ export default function ProfilePage() {
                 L'email non può essere cambiata.
               </p>
             </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="phone">Telefono</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+39 000 000 0000"
-                  className="pl-9 rounded"
-                />
-              </div>
-            </div>
-
-            {infoFeedback && (
-              <FeedbackBanner
-                type={infoFeedback.type}
-                message={infoFeedback.message}
-                onClose={() => setInfoFeedback(null)}
-              />
-            )}
 
             <div className="flex justify-end">
               <Button
@@ -451,14 +362,6 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {pwFeedback && (
-                <FeedbackBanner
-                  type={pwFeedback.type}
-                  message={pwFeedback.message}
-                  onClose={() => setPwFeedback(null)}
-                />
-              )}
-
               <div className="flex justify-end">
                 <Button
                   type="submit"
@@ -503,14 +406,6 @@ export default function ProfilePage() {
             </p>
 
             <Separator className="bg-red-200" />
-
-            {deleteFeedback && (
-              <FeedbackBanner
-                type={deleteFeedback.type}
-                message={deleteFeedback.message}
-                onClose={() => setDeleteFeedback(null)}
-              />
-            )}
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -567,7 +462,6 @@ export default function ProfilePage() {
                     className="rounded"
                     onClick={() => {
                       setDeletePassword("");
-                      setDeleteFeedback(null);
                     }}
                   >
                     Torna indietro
