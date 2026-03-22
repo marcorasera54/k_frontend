@@ -91,20 +91,7 @@ export default function UserHome({ user }: UserHomeProps) {
 
   return (
     <div className="w-full min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-6">
-          {/* Logo */}
-          <div
-            onClick={() => router.push("/")}
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-xl font-bold">C</span>
-            </div>
-            <span className="text-xl font-semibold">Nome</span>
-          </div>
-        </div>
-      </header>
+      <AppHeader user={user} />
       {/* Main Content */}
       <div className="max-w-400 mx-auto p-6 lg:p-8 space-y-8">
         <div className="relative mb-8 rounded overflow-hidden">

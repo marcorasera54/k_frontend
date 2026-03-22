@@ -18,7 +18,7 @@ export const fetchSportsCenters = createAsyncThunk<
     if (params.search) queryParams.append("search", params.search);
 
     const response = await api.get<SportsCenter[]>(
-      `/sports-centers?${queryParams.toString()}`
+      `/sports-centers/?${queryParams.toString()}`
     );
     return response.data;
   } catch (error: any) {
