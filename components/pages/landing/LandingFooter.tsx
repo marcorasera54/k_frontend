@@ -103,9 +103,8 @@ export default function LandingFooter() {
 
       <div className="relative z-10 border-t border-white/10" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/40">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center gap-3 text-xs text-white/40">
         <p>© {new Date().getFullYear()} Nome. Tutti i diritti riservati.</p>
-        <p>Fatto con ❤️</p>
       </div>
     </footer>
   );
