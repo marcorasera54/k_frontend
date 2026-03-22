@@ -306,7 +306,6 @@ export default function UserHome({ user }: UserHomeProps) {
                       </Badge>
                     </div>
 
-                    {/* Content Section - flex-grow ensures button stays at bottom */}
                     <div className="p-6 pt-12 flex flex-col flex-grow">
                       <div className="flex-grow">
                         <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors text-center">

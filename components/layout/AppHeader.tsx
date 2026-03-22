@@ -28,7 +28,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
       <div className="flex h-16 items-center justify-between px-6">
         {/* Logo */}
         <div
-          onClick={() => router.push("/")}
+          onClick={() => router.push(user ? "/fields" : "/")}
           className="flex items-center gap-3 cursor-pointer"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -37,9 +37,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
           <span className="text-xl font-semibold">Nome</span>
         </div>
 
-        {/* Right side */}
         <div className="flex items-center gap-1">
-          {/* 🔔 Bell — standalone, outside any dropdown */}
           <NotificationBell />
 
           {/* User dropdown */}

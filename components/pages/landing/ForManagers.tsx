@@ -75,7 +75,6 @@ export default function ForManagersSection() {
         </div>
       </div>
 
-      {/* Full-width grid — no max-w container */}
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[520px]">
         <div className="flex flex-col justify-center gap-8 px-8 sm:px-16 xl:px-24">
           <div className="space-y-4">

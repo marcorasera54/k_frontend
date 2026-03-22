@@ -65,7 +65,6 @@ export default function HowItWorksSection() {
                       />
                     </div>
 
-                    {/* Right line */}
                     <div
                       className={`flex-1 h-px ${isLast ? "opacity-0" : "bg-slate-200"}`}
                     />

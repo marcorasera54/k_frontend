@@ -243,7 +243,6 @@ export default function BookingPage() {
         {/* Weekly View Section */}
         <div className="py-3">
           <div className="grid lg:grid-cols-[380px,1fr] gap-6">
-            {/* Left Column - Calendar */}
             <div className="space-y-4">
               <Card className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 py-4 overflow-hidden">
                 <CardHeader>
@@ -334,7 +333,6 @@ export default function BookingPage() {
               </Card>
             </div>
 
-            {/* Right Column - Time Slots & Summary */}
             <div className="space-y-6">
               {/* Selected Date Header */}
               <div className="lg:hidden">

@@ -65,7 +65,6 @@ export default function FeaturesSection() {
           </p>
         </div>
 
-        {/* Two-column layout: image left, features right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="relative w-full h-[460px] sm:h-[560px] rounded-2xl overflow-hidden flex-shrink-0">
             <Image
@@ -81,7 +80,6 @@ export default function FeaturesSection() {
           <div className="flex flex-col gap-6">
             {FEATURES.map(({ Icon, title, description }, idx) => (
               <div key={title} className="group flex gap-4 items-start">
-                {/* Left: number + line */}
                 <div className="flex flex-col items-center flex-shrink-0">
                   <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white border border-slate-200 shadow-sm transition-all duration-200">
                     <Icon

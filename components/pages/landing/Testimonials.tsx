@@ -139,7 +139,6 @@ export default function TestimonialsSection() {
 
       {/* Scrolling row */}
       <div className="relative mb-4">
-        {/* Fade edges — thinner on mobile */}
         <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
