@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { initiateGoogleLogin, loginUser } from "@/components/api/connectors/authApi";
+import {
+  initiateGoogleLogin,
+  loginUser,
+} from "@/components/api/connectors/authApi";
 import { GoogleIcon } from "@/lib/constants/icons/google-icon";
 import { setToast, TOAST_TYPE } from "@/components/ui/toast";
 
@@ -20,7 +23,7 @@ const LoginForm: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      router.push("/fields");
     }
   }, [isAuthenticated, router]);
 

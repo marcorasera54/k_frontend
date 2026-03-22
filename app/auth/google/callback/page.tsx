@@ -33,7 +33,7 @@ export default function GoogleCallbackPage() {
           title: "Successo!",
           message: "Accesso con Google eseguito con successo.",
         });
-        router.push("/");
+        router.push("/fields");
       })
       .catch(() => {
         setToast({
