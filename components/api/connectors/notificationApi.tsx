@@ -8,7 +8,7 @@ export const fetchNotifications = createAsyncThunk<
   { rejectValue: string }
 >("notifications/fetchAll", async (_, { rejectWithValue }) => {
   try {
-    const res = await api.get("/notifications/");
+    const res = await api.get("/notifications");
     return res.data;
   } catch {
     return rejectWithValue("Failed to fetch notifications");
