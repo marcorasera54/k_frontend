@@ -18,7 +18,7 @@ export const createAvailability = createAsyncThunk<
   async (availabilityData, { rejectWithValue }) => {
     try {
       const response = await api.post<Availability>(
-        "/availability",
+        "/availability/create-availability",
         availabilityData,
       );
       return response.data;

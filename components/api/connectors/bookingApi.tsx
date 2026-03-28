@@ -30,7 +30,7 @@ export const fetchAllBookings = createAsyncThunk<
     if (params.page_size) query.set("page_size", String(params.page_size));
 
     const response = await api.get<PaginatedBookingsResponse>(
-      `/bookings/?${query.toString()}`,
+      `/bookings/get-all-bookings?${query.toString()}`,
     );
     return response.data;
   } catch (error: any) {
@@ -46,7 +46,7 @@ export const createBooking = createAsyncThunk<
   { rejectValue: string }
 >("bookings/createBooking", async (bookingData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Booking>("/bookings/", bookingData);
+    const response = await api.post<Booking>("/bookings/create-booking", bookingData);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to create booking";

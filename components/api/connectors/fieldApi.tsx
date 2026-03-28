@@ -13,7 +13,7 @@ export const fetchFields = createAsyncThunk<
     if (params.is_active !== undefined) queryParams.append("is_active", String(params.is_active));
     if (params.sports_center_id) queryParams.append("sports_center_id", params.sports_center_id);
 
-    const response = await api.get<Field[]>(`/fields?${queryParams.toString()}`);
+    const response = await api.get<Field[]>(`/fields/get-fields?${queryParams.toString()}`);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to fetch fields";
@@ -41,7 +41,7 @@ export const createField = createAsyncThunk<
   { rejectValue: string }
 >("fields/createField", async (fieldData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Field>("/fields/", fieldData);
+    const response = await api.post<Field>("/fields/create-field", fieldData);
     return response.data;
   } catch (error: any) {
     const message = error.response?.data?.detail || "Failed to create field";

@@ -18,7 +18,7 @@ export const fetchSportsCenters = createAsyncThunk<
     if (params.search) queryParams.append("search", params.search);
 
     const response = await api.get<SportsCenter[]>(
-      `/sports-centers?${queryParams.toString()}`
+      `/sports-centers/get-centers?${queryParams.toString()}`
     );
     return response.data;
   } catch (error: any) {
@@ -64,7 +64,7 @@ export const createSportsCenter = createAsyncThunk<
   { rejectValue: string }
 >("sportsCenters/createSportsCenter", async (centerData, { rejectWithValue }) => {
   try {
-    const response = await api.post<SportsCenter>("/sports-centers", centerData);
+    const response = await api.post<SportsCenter>("/sports-centers/create-center", centerData);
     return response.data;
   } catch (error: any) {
     const message =

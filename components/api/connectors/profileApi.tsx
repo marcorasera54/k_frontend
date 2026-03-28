@@ -17,7 +17,7 @@ export const fetchProfile = createAsyncThunk(
   "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/profile/");
+      const response = await api.get("/profile/get-profile");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -31,7 +31,7 @@ export const updateProfile = createAsyncThunk(
   "profile/updateProfile",
   async (data: UpdateProfilePayload, { rejectWithValue }) => {
     try {
-      const response = await api.patch("/profile/", data);
+      const response = await api.patch("/profile/update-profile", data);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -59,7 +59,7 @@ export const deleteAccount = createAsyncThunk(
   "profile/deleteAccount",
   async (password: string, { rejectWithValue }) => {
     try {
-      const response = await api.delete("/profile/", { data: { password } });
+      const response = await api.delete("/profile/delete-account", { data: { password } });
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
