@@ -34,7 +34,7 @@ const VerifyEmailPage: React.FC = () => {
         await dispatch(verifyEmail(token)).unwrap();
         setVerificationStatus("success");
         setTimeout(() => {
-          router.push("/fields");
+          router.push("/dashboard");
         }, 3000);
       } catch (error) {
         setVerificationStatus("error");

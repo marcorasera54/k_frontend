@@ -29,7 +29,7 @@ export default function LandingFooter() {
     Prodotto: LINKS.Prodotto,
     Gestori: LINKS.Gestori.map((item) => ({
       ...item,
-      action: () => router.push("/fields"),
+      action: () => router.push("/dashboard"),
     })),
   };
 

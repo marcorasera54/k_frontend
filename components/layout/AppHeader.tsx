@@ -81,7 +81,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
 
               <DropdownMenuItem
                 className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => router.push("/fields")}
+                onClick={() => router.push("/dashboard")}
               >
                 <CalendarClock className="mr-1 h-4 w-4" />
                 <span>Le mie prenotazioni</span>
