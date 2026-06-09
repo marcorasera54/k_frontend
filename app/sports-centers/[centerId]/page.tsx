@@ -253,7 +253,7 @@ export default function SportsCenterDetailPage() {
               ))}
             </div>
           ) : centerFields.length === 0 ? (
-            <Card>
+            <Card className="border-0 shadow-none">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-muted-foreground">
