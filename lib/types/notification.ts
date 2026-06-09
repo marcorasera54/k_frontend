@@ -1,7 +1,5 @@
 export enum NotificationType {
-  BOOKING_CONFIRMED = "booking_confirmed",
   BOOKING_REMINDER = "booking_reminder",
-  BOOKING_CANCELLED = "booking_cancelled",
   NEW_BOOKING_RECEIVED = "new_booking_received",
 }
 
