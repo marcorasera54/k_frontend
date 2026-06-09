@@ -65,7 +65,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-52 rounded shadow-sm">
+            <DropdownMenuContent align="end" className="w-64 rounded shadow-sm">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
