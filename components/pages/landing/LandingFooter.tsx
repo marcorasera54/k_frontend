@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Mail, MapPin } from "lucide-react";
+import Image from "next/image";
 
 const scrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -55,12 +56,18 @@ export default function LandingFooter() {
           <div className="lg:col-span-3 flex flex-col gap-5">
             <div
               onClick={() => router.push("/")}
-              className="flex items-center gap-2.5 cursor-pointer w-fit"
+              className="flex items-center cursor-pointer -ml-2 w-fit"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground flex-shrink-0">
-                <span className="text-sm font-bold">C</span>
+              <div className="flex h-14 items-center justify-center rounded-lg overflow-hidden">
+                <Image
+                  src="/images/logo.png"
+                  alt="Logo"
+                  width={60}
+                  height={60}
+                  className="object-contain"
+                />
               </div>
-              <span className="text-white font-semibold text-lg">Nome</span>
+              <span className="text-white font-bold text-xl">Sportivo</span>
             </div>
 
             <p className="text-sm leading-relaxed max-w-sm text-white">

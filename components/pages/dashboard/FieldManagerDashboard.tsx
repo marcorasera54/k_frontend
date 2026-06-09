@@ -201,8 +201,8 @@ export default function FieldManagerDashboard({
               >
                 <CardContent>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="bg-gray-100 p-2 rounded-lg">
-                      <Icon className="w-5 h-5 text-gray-600" />
+                    <div className="bg-blue-50 p-2 rounded-lg">
+                      <Icon className="w-5 h-5 text-blue-600" />
                     </div>
                     <p className="text-sm text-gray-500 font-medium">
                       {stat.title}
@@ -227,7 +227,7 @@ export default function FieldManagerDashboard({
             </h1>
             <Button
               onClick={() => setIsCreateCenterModalOpen(true)}
-              className="rounded bg-slate-900 hover:bg-slate-800 w-full sm:w-auto"
+              className="rounded w-full sm:w-auto"
             >
               <Plus className="w-4 h-4" />
               Aggiungi Centro
@@ -242,7 +242,7 @@ export default function FieldManagerDashboard({
               </p>
             </div>
           ) : sportsCenters.length === 0 ? (
-            <Card className="border shadow-sm">
+            <Card className="border-0 shadow-none">
               <CardContent className="p-8 sm:p-16">
                 <div className="flex flex-col items-center justify-center text-center">
                   <div className="bg-slate-100 p-4 rounded-full mb-4">
@@ -256,7 +256,7 @@ export default function FieldManagerDashboard({
                   </p>
                   <Button
                     onClick={() => setIsCreateCenterModalOpen(true)}
-                    className="mt-4 bg-slate-900 hover:bg-slate-800 w-full sm:w-auto"
+                    className="mt-4 w-full sm:w-auto"
                   >
                     <Plus className="w-4 h-4" />
                     Aggiungi Centro Sportivo

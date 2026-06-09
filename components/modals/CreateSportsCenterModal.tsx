@@ -182,7 +182,7 @@ export default function CreateSportsCenterModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Complesso Sportivo Centro"
-                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
               />
             </div>
 
@@ -196,7 +196,7 @@ export default function CreateSportsCenterModal({
                 }
                 rows={3}
                 placeholder="Breve descrizione del tuo centro sportivo..."
-                className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                 className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
               />
             </div>
 
@@ -337,7 +337,7 @@ export default function CreateSportsCenterModal({
                     })
                   }
                   placeholder="+39 123 456 7890"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function CreateSportsCenterModal({
                     })
                   }
                   placeholder="contatto@esempio.com"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
 
@@ -377,7 +377,7 @@ export default function CreateSportsCenterModal({
                     })
                   }
                   placeholder="https://esempio.com"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
 
@@ -397,7 +397,7 @@ export default function CreateSportsCenterModal({
                     })
                   }
                   placeholder="Via Roma 123, Città, Provincia"
-                  className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
             </div>

@@ -172,7 +172,7 @@ export default function ManagerBookingsTab() {
             placeholder="Cerca per nome, cognome o email..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-9 rounded"
+            className="pl-9 rounded border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
         </div>
 
@@ -206,7 +206,7 @@ export default function ManagerBookingsTab() {
       {/* Table */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="h-8 w-8 animate-spin text-black" />
           <p className="mt-3 text-sm text-muted-foreground">
             Caricamento prenotazioni...
           </p>
@@ -226,7 +226,7 @@ export default function ManagerBookingsTab() {
           <div className="hidden md:grid grid-cols-[minmax(0,2.5fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.2fr)_120px] gap-0 px-4 py-3 bg-muted/50 text-xs font-medium text-muted-foreground uppercase tracking-wide border-b">
             <span className="flex items-center gap-2">
               {" "}
-              <User className="h-4 w-4 text-primary" />
+              <User className="h-4 w-4 text-black" />
               Utente / Campo
             </span>
             <span className="flex items-center gap-2">
@@ -386,13 +386,13 @@ export default function ManagerBookingsTab() {
               const start = new Date(selectedBooking.start_time);
               const end = new Date(selectedBooking.end_time);
               const statusCfg = STATUS_CONFIG[selectedBooking.status];
-              const StatusIcon = statusCfg.Icon;
+
               return (
                 <div className="space-y-5 pt-1">
                   {/* User */}
                   <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <UserCircle2 className="h-6 w-6 text-primary" />
+                      <User className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <p className="font-semibold text-base">

@@ -54,7 +54,7 @@ function ProfileSection({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="rounded">
+    <Card className="rounded border-0 shadow-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           {icon}
@@ -218,9 +218,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        <Separator className="my-3" />
         <ProfileSection
           title="Informazioni Personali"
-          icon={<UserIcon className="h-5 w-5 text-primary" />}
+          icon={<UserIcon className="h-5 w-5 text-black" />}
         >
           <form onSubmit={handleSaveInfo} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -231,7 +232,7 @@ export default function ProfilePage() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="John"
-                  className="rounded"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
               <div className="space-y-1.5">
@@ -241,7 +242,7 @@ export default function ProfilePage() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Doe"
-                  className="rounded"
+                  className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
             </div>
@@ -254,7 +255,7 @@ export default function ProfilePage() {
                   id="email"
                   value={displayUser?.email || ""}
                   disabled
-                  className="pl-9 rounded bg-muted/40 cursor-not-allowed"
+                  className="rounded pl-9 h-10 border-gray-300 bg-muted/40 cursor-not-allowed"
                 />
               </div>
               <p className="text-xs text-muted-foreground">
@@ -275,10 +276,12 @@ export default function ProfilePage() {
           </form>
         </ProfileSection>
 
+        <Separator className="mb-3" />
+
         {!profile?.oauth_provider && (
           <ProfileSection
             title="Sicurezza"
-            icon={<KeyRound className="h-5 w-5 text-primary" />}
+            icon={<KeyRound className="h-5 w-5 text-black" />}
           >
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-1.5">
@@ -290,7 +293,7 @@ export default function ProfilePage() {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Inserisci vecchia password"
-                    className="pr-10 rounded"
+                    className="pr-10 rounded h-10 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                     required
                   />
                   <button
@@ -316,7 +319,7 @@ export default function ProfilePage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Minimo 8 caratteri"
-                    className="pr-10 rounded"
+                    className="pr-10 rounded h-10 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                     required
                     minLength={8}
                   />
@@ -345,7 +348,7 @@ export default function ProfilePage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Reinserisci nuova password"
-                    className="pr-10 rounded"
+                    className="pr-10 rounded h-10 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                     required
                   />
                   <button
@@ -392,6 +395,8 @@ export default function ProfilePage() {
           </Card>
         )}
 
+        <Separator className="mb-10" />
+
         <Card className="rounded border-destructive/30 bg-destructive/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg text-destructive">
@@ -414,7 +419,7 @@ export default function ProfilePage() {
                   Elimina account
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded">
+              <AlertDialogContent className="bg-white dark:bg-white text-black rounded border border-gray-300">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Sei assolutamente sicuro?</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -427,7 +432,6 @@ export default function ProfilePage() {
                     .
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-
                 {!profile?.oauth_provider && (
                   <div className="space-y-1.5 py-2">
                     <Label htmlFor="delete_password">
@@ -440,7 +444,7 @@ export default function ProfilePage() {
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}
                         placeholder="Inserisci la password per confermare"
-                        className="pr-10 rounded"
+                        className="pr-10 rounded h-10 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                       />
                       <button
                         type="button"
@@ -456,10 +460,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 )}
-
                 <AlertDialogFooter>
                   <AlertDialogCancel
-                    className="rounded"
+                    className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                     onClick={() => {
                       setDeletePassword("");
                     }}

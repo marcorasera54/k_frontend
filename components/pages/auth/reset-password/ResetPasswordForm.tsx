@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { useAppDispatch } from "@/store/hooks";
 import { clearError } from "@/store/slices/authSlice";
 import { ArrowLeft } from "lucide-react";
-import { resetPassword, verifyResetToken } from "@/components/api/connectors/authApi";
+import {
+  resetPassword,
+  verifyResetToken,
+} from "@/components/api/connectors/authApi";
 
 const ResetPasswordForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -132,7 +135,7 @@ const ResetPasswordForm: React.FC = () => {
 
         <Button
           onClick={() => router.push("/forgot-password")}
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           Richiedi nuovo reset
         </Button>
@@ -153,7 +156,7 @@ const ResetPasswordForm: React.FC = () => {
         </div>
         <Button
           onClick={() => router.push("/login")}
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           Vai al login
         </Button>
@@ -187,7 +190,7 @@ const ResetPasswordForm: React.FC = () => {
             onChange={handleInputChange}
             placeholder="••••••••"
             disabled={isLoading}
-            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+            className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
         </div>
         <div>
@@ -204,7 +207,7 @@ const ResetPasswordForm: React.FC = () => {
             onChange={handleInputChange}
             placeholder="••••••••"
             disabled={isLoading}
-            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+            className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
         </div>
 
@@ -213,7 +216,7 @@ const ResetPasswordForm: React.FC = () => {
           disabled={
             isLoading || !formData.new_password || !formData.confirm_password
           }
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           {isLoading ? (
             <div className="py-0.5">

@@ -15,6 +15,7 @@ import { getUserInitials } from "@/lib/utils";
 import { User } from "@/lib/types/auth";
 import { useRouter } from "next/navigation";
 import NotificationBell from "../pages/notifications/NotificationBell";
+import Image from "next/image";
 
 interface AppHeaderProps {
   user: User | null;
@@ -29,14 +30,20 @@ export default function AppHeader({ user }: AppHeaderProps) {
         {/* Logo */}
         <div
           onClick={() => router.push(user ? "/fields" : "/")}
-          className="flex items-center gap-3 cursor-pointer"
+          className="flex items-center gap-1 cursor-pointer"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="text-xl font-bold">C</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
           </div>
-          <span className="text-xl font-semibold">Nome</span>
-        </div>
 
+          <span className="text-xl font-semibold">Sportivo</span>
+        </div>
         <div className="flex items-center gap-1">
           <NotificationBell />
 
@@ -90,10 +97,10 @@ export default function AppHeader({ user }: AppHeaderProps) {
 
               <DropdownMenuItem
                 onClick={() => router.push("/logout")}
-                className="text-red-500 hover:bg-gray-50 hover:text-red-500 cursor-pointer"
+                className="hover:bg-gray-50 cursor-pointer"
               >
                 <LogOut className="mr-1 h-4 w-4 text-red-500" />
-                <span>Esci</span>
+                <span className="text-red-500">Esci</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -30,12 +30,9 @@ export default function CtaSection() {
           <div className="relative z-10 w-full px-8 sm:px-14 py-14 sm:py-20">
             <div className="max-w-xl flex flex-col gap-6">
               {/* Eyebrow */}
-              <div className="flex items-center gap-2">
-                <span className="h-px w-8 bg-primary" />
-                <span className="text-sm font-semibold text-primary uppercase tracking-widest">
-                  Inizia oggi
-                </span>
-              </div>
+              <span className="text-sm font-bold text-white uppercase tracking-widest">
+                Inizia oggi
+              </span>
 
               {/* Heading */}
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">

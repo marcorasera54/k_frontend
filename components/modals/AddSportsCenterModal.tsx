@@ -262,7 +262,7 @@ export default function AddSportsCenterModal({
                   <Upload className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
                     id="logo"
-                    placeholder="https://esempio.com/logo.png"
+                    placeholder="https://esempio.com/images/logo.png"
                     value={centerData.logoUrl}
                     onChange={(e) =>
                       setCenterData({ ...centerData, logoUrl: e.target.value })
@@ -287,7 +287,7 @@ export default function AddSportsCenterModal({
                     })
                   }
                   rows={3}
-                  className="mt-1.5 rounded-lg border-gray-200 bg-white resize-none focus:border-blue-500 focus:ring-blue-500/20"
+                  className="mt-1.5 rounded-lg resize-none h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
                 />
               </div>
             </div>

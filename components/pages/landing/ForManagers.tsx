@@ -23,30 +23,6 @@ const MANAGER_FEATURES = [
   { Icon: Settings2, text: "Gestione campi, orari e disponibilità" },
 ];
 
-const STATS = [
-  {
-    label: "Prenotazioni oggi",
-    value: "12",
-    color: "text-emerald-600",
-    bar: "bg-emerald-500",
-    pct: "75%",
-  },
-  {
-    label: "Ricavi del mese",
-    value: "€1.240",
-    color: "text-blue-600",
-    bar: "bg-blue-500",
-    pct: "60%",
-  },
-  {
-    label: "Campi attivi",
-    value: "4",
-    color: "text-violet-600",
-    bar: "bg-violet-500",
-    pct: "40%",
-  },
-];
-
 const IMAGES = [
   "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=600&auto=format&fit=crop",
@@ -62,7 +38,7 @@ export default function ForManagersSection() {
       <div className="mx-auto px-4 sm:px-6">
         {/* Section header */}
         <div className="text-center mb-12 sm:mb-16">
-          <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
+          <p className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
             Per i gestori
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
@@ -75,8 +51,8 @@ export default function ForManagersSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[520px]">
-        <div className="flex flex-col justify-center gap-8 px-8 sm:px-16 xl:px-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[520px] px-6 sm:px-16 xl:px-24">
+        <div className="flex flex-col justify-center gap-8">
           <div className="space-y-4">
             <h3 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
               Tutto sotto controllo,{" "}
@@ -120,7 +96,7 @@ export default function ForManagersSection() {
 
         <div className="grid grid-cols-2 grid-rows-2 min-h-[400px] lg:min-h-full gap-2">
           {IMAGES.map((src, i) => (
-            <div key={i} className="relative overflow-hidden rounded-2xl">
+            <div key={i} className="relative overflow-hidden rounded-xl">
               <Image
                 src={src}
                 alt="Centro sportivo"

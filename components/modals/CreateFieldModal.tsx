@@ -193,7 +193,7 @@ export default function CreateFieldModal({
                 setFormData({ ...formData, name: e.target.value })
               }
               placeholder="Campo Calcio Principale"
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
           </div>
 
@@ -254,7 +254,7 @@ export default function CreateFieldModal({
             >
               <SelectTrigger
                 id="sport_type"
-                className="w-full rounded h-10 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+                className="w-full rounded h-10 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -283,7 +283,7 @@ export default function CreateFieldModal({
                 setFormData({ ...formData, hourly_rate: e.target.value })
               }
               placeholder="50.00"
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
           </div>
 
@@ -297,7 +297,7 @@ export default function CreateFieldModal({
               }
               rows={3}
               placeholder="Descrizione facoltativa del campo..."
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
             />
           </div>
 

@@ -117,18 +117,18 @@ export default function UserDashboard({ user }: UserDashboardProps) {
         {/* My Bookings Section */}
         <div className="mb-8">
           <div className="flex flex-row items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Le Mie Prenotazioni</h2>
+            <h2 className="text-2xl font-bold">Le mie prenotazioni</h2>
           </div>
 
           {bookingsLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-black" />
               <p className="mt-4 text-muted-foreground">
                 Caricamento prenotazioni...
               </p>
             </div>
           ) : bookings.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-0 shadow-none">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                   <Calendar className="h-8 w-8 text-muted-foreground" />
@@ -139,7 +139,7 @@ export default function UserDashboard({ user }: UserDashboardProps) {
                 <p className="text-muted-foreground text-center mb-4">
                   Non hai ancora prenotato nessun campo. Inizia ora!
                 </p>
-                <Button onClick={() => router.push("/fields")}>
+                <Button className="rounded" onClick={() => router.push("/fields")}>
                   Prenota il Tuo Primo Campo
                 </Button>
               </CardContent>

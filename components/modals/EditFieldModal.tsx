@@ -146,7 +146,7 @@ export default function EditFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
           </div>
 
@@ -194,7 +194,7 @@ export default function EditFieldModal({
               onChange={(e) =>
                 setFormData({ ...formData, hourly_rate: e.target.value })
               }
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
           </div>
 
@@ -207,7 +207,7 @@ export default function EditFieldModal({
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={3}
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
               placeholder="Descrizione..."
             />
           </div>

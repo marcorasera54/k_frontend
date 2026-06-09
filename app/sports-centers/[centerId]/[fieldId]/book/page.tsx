@@ -164,7 +164,7 @@ export default function BookingPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <Loader2 className="h-12 w-12 animate-spin text-black mx-auto" />
           <p className="text-muted-foreground">Caricamento campo...</p>
         </div>
       </div>
@@ -345,7 +345,7 @@ export default function BookingPage() {
               <div>
                 {slotsLoading ? (
                   <div className="flex flex-col items-center justify-center py-16">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
+                    <Loader2 className="h-8 w-8 animate-spin text-black mb-3" />
                     <p className="text-sm text-muted-foreground">
                       Caricamento orari disponibili...
                     </p>
@@ -429,7 +429,7 @@ export default function BookingPage() {
                                 className={cn(
                                   "font-bold text-sm sm:text-base",
                                   isAvailable
-                                    ? "text-primary"
+                                    ? "text-black"
                                     : "text-gray-400",
                                 )}
                               >

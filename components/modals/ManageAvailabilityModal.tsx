@@ -276,7 +276,7 @@ export default function ManageAvailabilityModal({
                             },
                           })
                         }
-                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                        className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -298,7 +298,7 @@ export default function ManageAvailabilityModal({
                             },
                           })
                         }
-                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                        className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                       />
                     </div>
                   </div>
@@ -447,7 +447,7 @@ export default function ManageAvailabilityModal({
                           blocked_date: e.target.value,
                         })
                       }
-                      className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                      className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                     />
                   </div>
 
@@ -467,7 +467,7 @@ export default function ManageAvailabilityModal({
                             start_time: e.target.value,
                           })
                         }
-                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                        className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -485,7 +485,7 @@ export default function ManageAvailabilityModal({
                             end_time: e.target.value,
                           })
                         }
-                        className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                        className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                       />
                     </div>
                   </div>
@@ -503,7 +503,7 @@ export default function ManageAvailabilityModal({
                         })
                       }
                       placeholder="es., Manutenzione, Evento Privato, ecc."
-                      className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white resize-none"
+                      className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white resize-none"
                     />
                   </div>
 

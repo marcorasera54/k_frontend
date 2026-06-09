@@ -78,7 +78,7 @@ const ForgotPasswordForm: React.FC = () => {
         </div>
         <Button
           onClick={() => router.push("/login")}
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           Torna al login
         </Button>
@@ -106,13 +106,13 @@ const ForgotPasswordForm: React.FC = () => {
           onChange={handleInputChange}
           placeholder="you@example.com"
           disabled={isLoading}
-          className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+          className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
         />
 
         <Button
           type="submit"
           disabled={isLoading || !/\S+@\S+\.\S+/.test(email)}
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           {isLoading ? (
             <div className="py-0.5">

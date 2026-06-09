@@ -202,7 +202,7 @@ export default function EditSportsCenterModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Complesso Sportivo Centro"
-                className="rounded h-10 px-4 border-gray-300 bg-white"
+                className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
               />
             </div>
 
@@ -216,7 +216,7 @@ export default function EditSportsCenterModal({
                 }
                 rows={3}
                 placeholder="Breve descrizione del tuo centro sportivo..."
-                className="rounded px-4 border-gray-300 bg-white resize-none"
+                className="rounded px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
               />
             </div>
 

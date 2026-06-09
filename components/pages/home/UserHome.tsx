@@ -231,7 +231,7 @@ export default function UserHome({ user }: UserHomeProps) {
 
           {/* Empty State */}
           {!isLoading && !error && sportsCenters.length === 0 && (
-            <Card>
+            <Card className="border-0 shadow-none">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Search className="h-12 w-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">
@@ -308,7 +308,7 @@ export default function UserHome({ user }: UserHomeProps) {
 
                     <div className="p-6 pt-12 flex flex-col flex-grow">
                       <div className="flex-grow">
-                        <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors text-center">
+                        <h3 className="text-black text-xl font-semibold mb-2 group-hover:text-black transition-colors text-center">
                           {center.name || "Centro Sportivo"}
                         </h3>
 

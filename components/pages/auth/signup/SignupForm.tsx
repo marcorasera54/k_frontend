@@ -132,7 +132,7 @@ const SignupForm: React.FC = () => {
         </div>
         <Button
           onClick={() => router.push("/login")}
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           Torna al login
         </Button>
@@ -168,7 +168,7 @@ const SignupForm: React.FC = () => {
               onChange={handleInputChange}
               placeholder="John"
               disabled={isLoading}
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
             {errors.first_name && (
               <p className="mt-1.5 text-sm text-red-600">{errors.first_name}</p>
@@ -190,7 +190,7 @@ const SignupForm: React.FC = () => {
               onChange={handleInputChange}
               placeholder="Doe"
               disabled={isLoading}
-              className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+              className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
             />
             {errors.last_name && (
               <p className="mt-1.5 text-sm text-red-600">{errors.last_name}</p>
@@ -213,7 +213,7 @@ const SignupForm: React.FC = () => {
             onChange={handleInputChange}
             placeholder="you@example.com"
             disabled={isLoading}
-            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+            className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
           {errors.email && (
             <p className="mt-1.5 text-sm text-red-600">{errors.email}</p>
@@ -235,7 +235,7 @@ const SignupForm: React.FC = () => {
             onChange={handleInputChange}
             placeholder="••••••••"
             disabled={isLoading}
-            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+            className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
           {errors.password && (
             <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>
@@ -262,7 +262,7 @@ const SignupForm: React.FC = () => {
             onChange={handleInputChange}
             placeholder="••••••••"
             disabled={isLoading}
-            className="rounded h-10 px-4 border-gray-300 focus:border-gray-900 focus:ring-gray-900 bg-white"
+            className="rounded h-10 px-4 border-gray-300 focus:border-blue-600 focus:ring-blue-600 bg-white"
           />
           {errors.confirmPassword && (
             <p className="mt-1.5 text-sm text-red-600">
@@ -281,7 +281,7 @@ const SignupForm: React.FC = () => {
             !formData.password ||
             !formData.confirmPassword
           }
-          className="w-full h-10 rounded bg-black hover:bg-gray-900 text-white font-medium transition-colors"
+          className="w-full h-10 rounded text-white font-medium transition-colors"
         >
           {isLoading ? (
             <div className="flex items-center justify-center">

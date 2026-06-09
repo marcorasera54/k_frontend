@@ -179,7 +179,7 @@ export default function SportsCenterDetailPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {selectedSportsCenter.contact_info.address && (
                   <div className="flex items-start gap-3 p-4 rounded bg-muted/50">
-                    <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <MapPin className="h-5 w-5 text-black mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-medium mb-1">Indirizzo</p>
                       <p className="text-sm text-muted-foreground">
@@ -191,7 +191,7 @@ export default function SportsCenterDetailPage() {
 
                 {selectedSportsCenter.contact_info.phone && (
                   <div className="flex items-start gap-3 p-4 rounded bg-muted/50">
-                    <Phone className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <Phone className="h-5 w-5 text-black mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-medium mb-1">Telefono</p>
                       <p className="text-sm text-muted-foreground">
@@ -203,7 +203,7 @@ export default function SportsCenterDetailPage() {
 
                 {selectedSportsCenter.contact_info.email && (
                   <div className="flex items-start gap-3 p-4 rounded bg-muted/50">
-                    <Mail className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <Mail className="h-5 w-5 text-black mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-medium mb-1">Email</p>
                       <p className="text-sm text-muted-foreground">
@@ -215,14 +215,14 @@ export default function SportsCenterDetailPage() {
 
                 {selectedSportsCenter.contact_info.website && (
                   <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-                    <Globe className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <Globe className="h-5 w-5 text-black mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-medium mb-1">Sito Web</p>
                       <a
                         href={selectedSportsCenter.contact_info.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline"
+                        className="text-sm text-black hover:underline"
                       >
                         {selectedSportsCenter.contact_info.website}
                       </a>
