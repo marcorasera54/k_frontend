@@ -268,7 +268,7 @@ export default function SportsCenterDetailPage() {
                   key={field._id}
                   className="border border-gray-100 bg-white rounded hover:border-gray-200 transition-all duration-300 p-0 overflow-hidden cursor-pointer group"
                 >
-                  <div className="relative h-40 overflow-hidden bg-muted">
+                  <div className="relative h-50 overflow-hidden bg-muted">
                     <Image
                       src={
                         field.image_url ??
