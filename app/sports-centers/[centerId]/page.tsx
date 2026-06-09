@@ -300,7 +300,7 @@ export default function SportsCenterDetailPage() {
                     </Badge>
                   </div>
 
-                  <CardContent className="px-4 pb-4f flex flex-col h-36">
+                  <CardContent className="px-4 pb-4 flex flex-col h-36">
                     <div className="mb-4">
                       <div className="flex justify-between">
                         <h3 className="font-semibold text-lg text-foreground line-clamp-1">
