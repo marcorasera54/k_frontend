@@ -331,7 +331,7 @@ export default function CreateFieldModal({
               disabled={
                 isSubmitting || isUploading || sportsCenters.length === 0
               }
-              className="rounded flex-1 bg-slate-900 hover:bg-slate-800"
+              className="rounded flex-1"
             >
               {isSubmitting || isUploading ? (
                 <>
